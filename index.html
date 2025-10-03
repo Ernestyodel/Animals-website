@@ -91,7 +91,6 @@
   .dots{
     position:absolute; left:0; right:0; bottom:10px;
     display:flex; gap:8px; justify-content:center; align-items:center;
-    padding:0 10px;
   }
   .dot{
     width:10px; height:10px; border-radius:50%;
@@ -101,16 +100,15 @@
   .dot.active{ background:#fff; transform:scale(1.1); }
   .proof-hero a.full{ position:absolute; inset:0; z-index:2; }
 
-  /* Small helper to align copy button on narrow screens */
+  /* Contract + metrics row */
   .contract-row{ display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin-top:12px; }
   .copy-btn{
-    padding:6px 10px;
-    border:1px solid var(--line);
-    border-radius:6px;
-    background:rgba(255,255,255,.06);
-    color:var(--text);
-    cursor:pointer;
+    padding:6px 10px; border:1px solid var(--line); border-radius:6px;
+    background:rgba(255,255,255,.06); color:var(--text); cursor:pointer;
   }
+  .metrics{ display:flex; gap:10px; margin-top:8px; flex-wrap:wrap; }
+  .badge{ display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px; border:1px solid var(--line); background:rgba(255,255,255,.04); }
+  .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
 </style>
 </head>
 <body>
@@ -152,10 +150,16 @@
         <span class="badge">
           Contract:
           <a id="contractLink" href="#" target="_blank" rel="noopener">
-            <code id="contractAddr"></code>
+            <code id="contractAddr" class="mono"></code>
           </a>
         </span>
         <button id="copyBtn" class="copy-btn" type="button" aria-label="Copy contract address">Copy</button>
+      </div>
+
+      <!-- Live metrics -->
+      <div class="metrics">
+        <span class="badge" id="priceBadge">Price: <strong id="priceVal">Loading…</strong></span>
+        <span class="badge" id="mcBadge" style="display:none;">MCap: <strong id="mcVal">Loading…</strong></span>
       </div>
     </section>
 
@@ -204,7 +208,11 @@ const TELEGRAM_LINK    = "https://t.me/animalstoncoin";
 const TWITTER_LINK     = "https://x.com/animalstoncoin";
 const TONVIEWER_LINK   = "https://tonviewer.com/" + CONTRACT_ADDRESS;
 
-/* ---------- Wire links + contract ---------- */
+/* GeckoTerminal API endpoints */
+const GT_POOL_API  = "https://api.geckoterminal.com/api/v2/networks/ton/pools/EQBpfJcKGLeI_Hjndfc1HiDD2OFC98S0O9rdaZhmwtlJFGtQ";
+const GT_TOKEN_API = "https://api.geckoterminal.com/api/v2/networks/ton/tokens/" + CONTRACT_ADDRESS;
+
+/* ---------- Wire links + contract + copy ---------- */
 document.addEventListener('DOMContentLoaded', ()=>{
   document.getElementById('year').textContent = new Date().getFullYear();
   document.getElementById('contractAddr').textContent = CONTRACT_ADDRESS;
@@ -226,7 +234,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
       copyBtn.disabled = true;
       setTimeout(()=>{ copyBtn.textContent = prev; copyBtn.disabled = false; }, 1600);
     }catch(e){
-      // Fallback: select text
+      // Fallback: select and copy
       const range = document.createRange();
       range.selectNode(document.getElementById('contractAddr'));
       const sel = window.getSelection();
@@ -235,7 +243,53 @@ document.addEventListener('DOMContentLoaded', ()=>{
       sel.removeAllRanges();
     }
   });
+
+  loadMetrics();               // initial fetch
+  setInterval(loadMetrics, 60_000); // refresh every minute
 });
+
+/* ---------- Load Price & Market Cap ---------- */
+function formatUSD(n){
+  const x = Number(n);
+  if(!isFinite(x)) return "N/A";
+  if(x >= 1) return "$" + x.toLocaleString(undefined,{maximumFractionDigits:2});
+  if(x >= 0.01) return "$" + x.toLocaleString(undefined,{maximumFractionDigits:4});
+  return "$" + x.toExponential(2);
+}
+async function loadMetrics(){
+  const priceEl = document.getElementById('priceVal');
+  const mcWrap  = document.getElementById('mcBadge');
+  const mcEl    = document.getElementById('mcVal');
+
+  try {
+    // Prefer token endpoint (often includes market_cap_usd / fdv_usd)
+    const t = await fetch(GT_TOKEN_API, {headers:{'Accept':'application/json'}}).then(r=>r.json());
+    const ta = t?.data?.attributes || {};
+    let priceUsd = ta.price_usd ?? ta.base_token_price_usd;
+    if(!priceUsd){
+      // Fallback: read from pool if token endpoint doesn't have price
+      const p = await fetch(GT_POOL_API, {headers:{'Accept':'application/json'}}).then(r=>r.json());
+      priceUsd = p?.data?.attributes?.base_token_price_usd;
+    }
+    if(priceUsd){
+      priceEl.textContent = formatUSD(priceUsd);
+    } else {
+      priceEl.textContent = "N/A";
+    }
+
+    // Market cap: prefer market_cap_usd, else show FDV if available
+    const mc = ta.market_cap_usd ?? ta.fdv_usd ?? null;
+    if(mc){
+      mcEl.textContent = formatUSD(mc);
+      mcWrap.style.display = "";
+    } else {
+      mcWrap.style.display = "none";
+    }
+  } catch (e){
+    priceEl.textContent = "N/A";
+    mcWrap.style.display = "none";
+  }
+}
 
 /* ===================================
    Proofs Slideshow
