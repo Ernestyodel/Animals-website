@@ -1,27 +1,13 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>ANIMAL — Meme on TON</title>
-  <meta name="description" content="ANIMAL — a fun, TON‑native meme token celebrating the sticker culture that changed Telegram forever." />
-  <meta name="theme-color" content="#14a8ff" />  <!-- Open Graph / Social -->  <meta property="og:title" content="ANIMAL — Meme on TON" />
-  <meta property="og:description" content="Animals is the first custom sticker ever; the spark of Telegram's sticker revolution. ANIMAL salutes that origin." />
-  <meta property="og:type" content="website" />
-  <meta property="og:image" content="data:image/svg+xml;utf8,
-  %3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='630'%3E
-    %3Cdefs%3E
-      %3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E
-        %3Cstop offset='0%25' stop-color='%2314a8ff'/%3E
-        %3Cstop offset='100%25' stop-color='%23007aff'/%3E
-      %3C/linearGradient%3E
-      %3Cstyle%3Etext%7Bfont-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif%3B%7D%3C/style%3E
-    %3C/defs%3E
-    %3Crect width='100%25' height='100%25' fill='url(%23g)'/%3E
-    %3Ccircle cx='1080' cy='100' r='120' fill='white' fill-opacity='.15'/%3E
-    %3Ctext x='60' y='230' font-size='120' fill='white' font-weight='800'%3EANIMAL%3C/text%3E
-    %3Ctext x='60' y='320' font-size='44' fill='white' fill-opacity='.9'%3ESticker Energy on TON%3C/text%3E
-    %3Ctext x='60' y='400' font-size='28' fill='white' fill-opacity='.9'%3EThe meme that salutes Telegram's first custom sticker.%3C/text%3E
-  %3C/svg%3E" />  <style>
+  <meta name="description" content="ANIMAL — a fun, TON-native meme token celebrating the sticker culture that changed Telegram forever." />
+  <meta name="theme-color" content="#14a8ff" />
+
+  <style>
     :root{
       --bg: #03050a;
       --card: rgba(15,25,40,.6);
@@ -29,23 +15,22 @@
       --text: #d7e9ff;
       --muted: #9bc5ff;
       --accent: #14a8ff;
-      --accent-2: #007aff;
       --glow: 0 8px 40px rgba(20,168,255,.35);
     }
     *{box-sizing:border-box}
-    html,body{margin:0; height:100%; background: radial-gradient(1200px 800px at 20% -10%, rgba(0,122,255,.25), transparent 60%), radial-gradient(1000px 700px at 110% 10%, rgba(20,168,255,.18), transparent 65%), var(--bg); color:var(--text); font: 16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;}
+    html,body{margin:0; height:100%; background: radial-gradient(1200px 800px at 20% -10%, rgba(0,122,255,.25), transparent 60%), radial-gradient(1000px 700px at 110% 10%, rgba(20,168,255,.18), transparent 65%), var(--bg); color:var(--text); font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;}
     a{color:var(--text); text-decoration:none}
     .wrap{max-width:1100px; margin:0 auto; padding:0 18px}
     header{position:sticky; top:0; z-index:30; backdrop-filter: blur(10px); background:linear-gradient(180deg, rgba(3,5,10,.8), rgba(3,5,10,.35)); border-bottom:1px solid var(--line)}
     .nav{display:flex; align-items:center; justify-content:space-between; padding:14px 0}
-    .brand{display:flex; align-items:center; gap:10px; font-weight:800; letter-spacing:.5px}
+    .brand{display:flex; align-items:center; gap:10px; font-weight:800;}
     .brand img{width:34px; height:34px; border-radius:50%; box-shadow:var(--glow)}
-    .nav a.btn{padding:10px 14px; border:1px solid var(--line); border-radius:12px; background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02)); transition: .2s transform}
+    .nav a.btn{padding:10px 14px; border:1px solid var(--line); border-radius:12px; background:rgba(255,255,255,.06); transition:.2s}
     .nav a.btn:hover{transform:translateY(-1px)}
     .cta-group{display:flex; gap:10px; align-items:center}
-    .hero{position:relative; padding:70px 0 30px 0}
-    .h1{font-size: clamp(34px, 5vw, 54px);line-height:1.05; font-weight:900; letter-spacing:.2px; margin:8px 0 0}
-    .tag{display:inline-block; font-size:14px; letter-spacing:.3px; padding:6px 10px; border-radius:100px; background:rgba(20,168,255,.12); border:1px solid rgba(20,168,255,.35); color:#bfe3ff}
+    .hero{padding:70px 0 30px 0}
+    .h1{font-size:clamp(34px, 5vw, 54px); line-height:1.05; font-weight:900;}
+    .tag{display:inline-block; font-size:14px; padding:6px 10px; border-radius:100px; background:rgba(20,168,255,.12); border:1px solid rgba(20,168,255,.35); color:#bfe3ff}
     .sub{font-size:18px; color:var(--muted); max-width:720px}
     .hero-cta{display:flex; gap:12px; flex-wrap:wrap; margin-top:18px}
     .primary{background:linear-gradient(180deg, rgba(20,168,255,.9), rgba(0,122,255,.9)); border:none; color:white; font-weight:700;}
@@ -65,13 +50,14 @@
     .wall img{width:100%; height:120px; object-fit:contain; display:block}
     .wall figcaption{font-size:12px; color:var(--muted); text-align:center; margin-top:6px}
     footer{margin:50px 0 80px; opacity:.9}
-    .rain-toggle{position:fixed; right:14px; bottom:14px; z-index:40}
-    .rain-toggle button{border-radius:999px; padding:12px 16px; border:1px solid var(--line); background:rgba(255,255,255,.05)}
-    #rain{position:fixed; inset:0; pointer-events:none; z-index:10}
+    #rain{position:fixed; inset:0; pointer-events:none; z-index:1;}
     .badge{display:inline-flex; align-items:center; gap:6px; font-size:12px; border:1px solid var(--line); background:rgba(255,255,255,.04); padding:6px 10px; border-radius:999px}
-  </style></head>
+  </style>
+</head>
 <body>
-  <canvas id="rain" width="0" height="0" aria-hidden="true"></canvas>  <header>
+  <canvas id="rain"></canvas>
+
+  <header>
     <div class="wrap nav">
       <div class="brand">
         <img alt="ANIMAL logo" src="animal-logo.png" />
@@ -83,112 +69,130 @@
         <a class="btn" id="tgBtn" href="#">Telegram</a>
       </div>
     </div>
-  </header>  <main class="wrap">
+  </header>
+
+  <main class="wrap">
     <section class="hero">
-      <span class="tag">TON‑native · Meme culture</span>
+      <span class="tag">TON-native · Meme culture</span>
       <h1 class="h1">Sticker Energy — <span style="color:var(--accent)">on TON</span></h1>
-      <p class="sub">“Animals” is credited as Telegram’s <strong>first custom sticker</strong> — the spark that started the sticker revolution. ANIMAL salutes that origin story and channels it into a playful, community‑powered meme token on the TON blockchain.</p>
+      <p class="sub">“Animals” is credited as Telegram’s <strong>first custom sticker</strong> — the spark that started the sticker revolution. ANIMAL salutes that origin story and channels it into a playful, community-powered meme token on the TON blockchain.</p>
       <div class="hero-cta">
         <a class="pill primary" id="buyPrimary" href="#">🛒 Buy ANIMAL</a>
         <a class="pill secondary" id="chartPrimary" href="#">📈 View Chart</a>
-        <a class="pill secondary" id="originLink" href="https://telegram.org/blog/stickers-revolution?setln=en" target="_blank" rel="noopener">🧩 Sticker Origin</a>
+        <a class="pill secondary" href="https://telegram.org/blog/stickers-revolution?setln=en" target="_blank">🧩 Sticker Origin</a>
       </div>
       <div style="margin-top:12px">
         <span class="badge">Contract: <code id="contractAddr">(add your jetton address)</code></span>
       </div>
-    </section><section class="ticker" aria-label="meme ticker">
-  <div class="lane">
-    <span>🐾 ANIMAL • Sticker Energy • TON • Telegram • Meme Culture • Buy • HODL • GM •</span>
-    <span>🐾 ANIMAL • Sticker Energy • TON • Telegram • Meme Culture • Buy • HODL • GM •</span>
-    <span>🐾 ANIMAL • Sticker Energy • TON • Telegram • Meme Culture • Buy • HODL • GM •</span>
-    <span>🐾 ANIMAL • Sticker Energy • TON • Telegram • Meme Culture • Buy • HODL • GM •</span>
-  </div>
-</section>
+    </section>
 
-<section style="margin:34px 0">
-  <div class="grid">
-    <article class="card">
-      <h3>What is ANIMAL?</h3>
-      <p class="muted">A fun TON‑native meme token that pays homage to Telegram’s first custom sticker and the culture it unlocked.</p>
-    </article>
-    <article class="card">
-      <h3>Why stickers?</h3>
-      <p class="muted">Stickers turned chats into playgrounds. ANIMAL captures that energy — fast, visual, shareable — then pairs it with on‑chain fun.</p>
-    </article>
-    <article class="card">
-      <h3>How to join</h3>
-      <p class="muted">Grab some ANIMAL on DEX, join the Telegram, and drop your best sticker‑powered memes. Simple.</p>
-    </article>
-  </div>
-</section>
+    <section class="ticker" aria-label="meme ticker">
+      <div class="lane">
+        <span>🐾 ANIMAL • Sticker Energy • TON • Telegram • Meme Culture • Buy • HODL • GM •</span>
+        <span>🐾 ANIMAL • Sticker Energy • TON • Telegram • Meme Culture • Buy • HODL • GM •</span>
+      </div>
+    </section>
 
-<section>
-  <h2 style="margin:6px 0 10px">Sticker Wall</h2>
-  <p class="muted" style="margin-top:0">Drop your pack into <code>/stickers</code> and list filenames in the array below. PNG or WEBP with transparent background looks best.</p>
-  <div class="wall" id="stickerWall"></div>
-</section>
+    <section style="margin:34px 0">
+      <div class="grid">
+        <article class="card"><h3>What is ANIMAL?</h3><p class="muted">A fun TON-native meme token that pays homage to Telegram’s first custom sticker and the culture it unlocked.</p></article>
+        <article class="card"><h3>Why stickers?</h3><p class="muted">Stickers turned chats into playgrounds. ANIMAL captures that energy — fast, visual, shareable — then pairs it with on-chain fun.</p></article>
+        <article class="card"><h3>How to join</h3><p class="muted">Grab some ANIMAL on DEX, join the Telegram, and drop your best sticker-powered memes. Simple.</p></article>
+      </div>
+    </section>
 
-<section style="margin-top:34px">
-  <h2 style="margin:6px 0 10px">Token Vibes</h2>
-  <div class="grid">
-    <article class="card"><h3>TON‑native</h3><p class="muted">Built where Telegram lives. Fast, cheap, friendly.</p></article>
-    <article class="card"><h3>Sticker‑first</h3><p class="muted">We communicate in images — so our brand does, too.</p></article>
-    <article class="card"><h3>Community‑powered</h3><p class="muted">Meme fuel comes from you. We amplify and reward it.</p></article>
-  </div>
-</section>
+    <section>
+      <h2>Sticker Wall</h2>
+      <div class="wall" id="stickerWall"></div>
+    </section>
 
-<footer>
-  <hr style="border:0; border-top:1px solid var(--line); margin-bottom:12px">
-  <div style="display:flex; gap:14px; flex-wrap:wrap; align-items:center; justify-content:space-between">
-    <small class="muted">© <span id="year"></span> ANIMAL · Built with sticker energy · Not financial advice.</small>
-    <div style="display:flex; gap:10px">
-      <a class="btn" href="https://dexscreener.com/" target="_blank" rel="noopener">Dexscreener</a>
-      <a class="btn" href="https://ston.fi/" target="_blank" rel="noopener">Ston.fi</a>
-      <a class="btn" href="https://dedust.io/" target="_blank" rel="noopener">DeDust</a>
-    </div>
-  </div>
-</footer>
+    <footer>
+      <hr style="border:0; border-top:1px solid var(--line); margin-bottom:12px">
+      <div style="display:flex; gap:14px; flex-wrap:wrap; align-items:center; justify-content:space-between">
+        <small class="muted">© <span id="year"></span> ANIMAL · Built with sticker energy · Not financial advice.</small>
+        <div style="display:flex; gap:10px">
+          <a class="btn" href="https://dexscreener.com/" target="_blank">Dexscreener</a>
+          <a class="btn" href="https://ston.fi/" target="_blank">Ston.fi</a>
+          <a class="btn" href="https://dedust.io/" target="_blank">DeDust</a>
+        </div>
+      </div>
+    </footer>
+  </main>
 
-  </main>  <div class="rain-toggle">
-    <button id="toggleRain" title="Toggle logo rain (or press R)">🌧️ Logo Rain</button>
-  </div>  <script>
-    const CONTRACT_ADDRESS = "PASTE_YOUR_JETTON_ADDRESS";
-    const STONFI_LINK = "https://ston.fi/";
-    const DEDUST_LINK = "https://dedust.io/";
-    const DEXSCREENER_LINK = "https://dexscreener.com/";
-    const TELEGRAM_LINK = "https://t.me/your_channel";
-    const STICKERS = ["animal_wink.png","animal_laser.webp","animal_rocket.png","animal_lol.webp"];
+  <script>
+    const CONTRACT_ADDRESS   = "PASTE_YOUR_JETTON_ADDRESS";
+    const STONFI_LINK        = "https://ston.fi/your_pair";
+    const DEXSCREENER_LINK   = "https://dexscreener.com/ton/yourpair";
+    const TELEGRAM_LINK      = "https://t.me/your_channel";
 
-    document.getElementById('year').textContent = new Date().getFullYear();
-    document.getElementById('contractAddr').textContent = CONTRACT_ADDRESS || '(add your jetton address)';
-    const setHref = (el, url) => { if(el){ el.href = url; el.target = '_blank'; el.rel = 'noopener'; } };
-    setHref(document.getElementById('buyBtn'), STONFI_LINK || DEDUST_LINK || '#');
-    setHref(document.getElementById('chartBtn'), DEXSCREENER_LINK || '#');
-    setHref(document.getElementById('tgBtn'), TELEGRAM_LINK || '#');
-    setHref(document.getElementById('buyPrimary'), STONFI_LINK || DEDUST_LINK || '#');
-    setHref(document.getElementById('chartPrimary'), DEXSCREENER_LINK || '#');
-
-    const wall = document.getElementById('stickerWall');
-    function makeCard(src, name){
-      const fig = document.createElement('figure');
-      const img = document.createElement('img');
-      img.loading = 'lazy';
-      img.alt = name;
-      img.src = `./stickers/${src}`;
-      const cap = document.createElement('figcaption');
-      cap.textContent = name.replace(/[_-]/g, ' ').replace(/\.[a-zA-Z0-9]+$/, '');
-      fig.appendChild(img); fig.appendChild(cap);
-      return fig;
+    // Auto-discover stickers: animal1.png ... animal30.png
+    const MAX_STICKERS = 30;
+    async function checkImage(url){
+      return new Promise(res=>{
+        const i=new Image();
+        i.onload=()=>res(true); i.onerror=()=>res(false);
+        i.src=url+"?v="+Date.now();
+      });
     }
-    STICKERS.forEach(file => wall.appendChild(makeCard(file, file)));
+    async function discoverStickers(){
+      const found=[];
+      let gap=0;
+      for(let i=1;i<=MAX_STICKERS;i++){
+        const name=`animal${i}.png`;
+        const url=`/stickers/${name}`;
+        if(await checkImage(url)){ found.push({name,url}); gap=0; }
+        else { gap++; if(gap>=3 && found.length>0) break; }
+      }
+      return found;
+    }
 
-    const cvs = document.getElementById('rain');
-    const ctx = cvs.getContext('2d');
-    let drops = [], raining = false, rafId = 0;
-    const tonSVG = `data:image/svg+xml;utf8,
-      <svg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'>
-        <defs><linearGradient id='b' x1='0' y1='0' x2='1' y2='1'><stop offset='0%' stop-color='%2314a8ff'/><stop offset='100%' stop-color='%23007aff'/></linearGradient></defs>
-        <rect width='48' height='48' rx='12' fill='url(#b)'/>
-        <path d='M24 10L13 21l11 17 11-17-11-11z' fill='white' fill-opacity='.95'/>
-      </svg>`;
-    const tgSVG = `data:image/svg+xml;utf8
+    // Build sticker wall
+    function buildWall(list){
+      const wall=document.getElementById('stickerWall');
+      wall.innerHTML="";
+      if(list.length===0){
+        wall.innerHTML="<p style='color:#ffb3b3'>No stickers found in /stickers/</p>";
+        return;
+      }
+      list.forEach(it=>{
+        const fig=document.createElement('figure');
+        const img=document.createElement('img'); img.src=it.url; img.alt=it.name;
+        const cap=document.createElement('figcaption'); cap.textContent=it.name.replace(/\.png$/,'');
+        fig.appendChild(img); fig.appendChild(cap); wall.appendChild(fig);
+      });
+    }
+
+    // Sticker rain
+    const cvs=document.getElementById('rain'),ctx=cvs.getContext('2d',{alpha:true});
+    function fit(){const dpr=Math.max(1,Math.min(2,window.devicePixelRatio||1));
+      cvs.width=innerWidth*dpr;cvs.height=innerHeight*dpr;
+      cvs.style.width=innerWidth+'px';cvs.style.height=innerHeight+'px';
+      ctx.setTransform(dpr,0,0,dpr,0,0);}fit();addEventListener('resize',fit);
+    let icons=[],drops=[],rafId=0;
+    function spawn(){const img=icons[(Math.random()*icons.length)|0];return{
+      x:Math.random()*innerWidth,y:-60,vy:.8+Math.random()*2.2,
+      size:28+Math.random()*60,rot:Math.random()*6.28,vr:(Math.random()-.5)*0.02,
+      img,sway:(Math.random()-.5)*.7};}
+    function step(){ctx.clearRect(0,0,innerWidth,innerHeight);
+      for(const d of drops){d.y+=d.vy;d.x+=Math.sin(d.y*.02)*d.sway;d.rot+=d.vr;
+        ctx.save();ctx.translate(d.x,d.y);ctx.rotate(d.rot);ctx.globalAlpha=.95;
+        ctx.drawImage(d.img,-d.size/2,-d.size/2,d.size,d.size);ctx.restore();}
+      for(let i=drops.length-1;i>=0;i--)if(drops[i].y>innerHeight+100)drops.splice(i,1);
+      if(drops.length<120&&icons.length)drops.push(spawn());
+      rafId=requestAnimationFrame(step);}
+    function loadIcons(list){return Promise.all(list.map(it=>new Promise(r=>{const im=new Image();im.onload=()=>r(im);im.src=it.url;})));}
+
+    window.addEventListener('load',async()=>{
+      document.getElementById('year').textContent=new Date().getFullYear();
+      document.getElementById('contractAddr').textContent=CONTRACT_ADDRESS;
+
+      const files=await discoverStickers();
+      buildWall(files);
+      if(files.length===0)return;
+      icons=await loadIcons(files);
+      for(let i=0;i<Math.min(12,icons.length*2);i++)drops.push(spawn());
+      if(!rafId)step();
+    });
+  </script>
+</body>
+  </html>
