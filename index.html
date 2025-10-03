@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>ANIMAL — Meme on TON</title>
-<meta name="description" content="ANIMAL — a fun, TON-native meme token celebrating the sticker culture that changed Telegram forever." />
+<title>ANIMALS — Meme on TON</title>
+<meta name="description" content="ANIMALS — a fun, TON-native meme token celebrating the sticker culture that changed Telegram forever." />
 <meta name="theme-color" content="#14a8ff" />
 <style>
   :root{
@@ -24,7 +24,6 @@
   a{color:var(--text);text-decoration:none}
   .wrap{max-width:1100px;margin:0 auto;padding:0 18px}
 
-  /* Keep content above rain */
   header, main, footer{position:relative; z-index:1;}
   header{
     position:sticky; top:0;
@@ -53,10 +52,8 @@
   .card{grid-column: span 4; background:var(--card); border:1px solid var(--line); border-radius:18px; padding:16px}
   @media (max-width:900px){ .card{grid-column:span 6} }
   @media (max-width:640px){ .card{grid-column:span 12} }
-  .card h3{margin:4px 0 8px 0}
   .muted{color:var(--muted)}
 
-  /* Sticker Wall grid */
   .wall{display:grid; grid-template-columns:repeat(auto-fill, minmax(120px, 1fr)); gap:12px}
   .wall figure{margin:0; padding:10px; background:rgba(255,255,255,.03); border:1px solid var(--line); border-radius:14px}
   .wall a{display:block}
@@ -115,13 +112,14 @@
   <header>
     <div class="wrap nav">
       <div class="brand">
-        <img alt="ANIMAL logo" src="animal-logo.png" />
-        <span>ANIMAL</span>
+        <img alt="ANIMALS logo" src="animal-logo.png" />
+        <span>ANIMALS</span>
       </div>
       <div class="cta-group">
-        <a class="btn" id="buyBtn" href="#">Buy on DEX</a>
+        <a class="btn" id="buyBtn" href="#">Buy on DeDust</a>
         <a class="btn" id="chartBtn" href="#">Chart</a>
         <a class="btn" id="tgBtn" href="#">Telegram</a>
+        <a class="btn" id="twBtn" href="#">Twitter</a>
       </div>
     </div>
   </header>
@@ -135,16 +133,22 @@
         Send it. Share it. Own it. <a href="https://telegram.org/blog/stickers-revolution?setln=en" target="_blank" rel="noopener">Read the origin story ↗</a>
       </p>
       <div class="hero-cta">
-        <a class="pill primary" id="buyPrimary" href="#">🛒 Buy ANIMAL</a>
+        <a class="pill primary" id="buyPrimary" href="#">🛒 Buy ANIMALS</a>
         <a class="pill secondary" id="chartPrimary" href="#">📈 View Chart</a>
-        <a class="pill secondary" href="https://telegram.org/blog/stickers-revolution?setln=en" target="_blank" rel="noopener">🧩 Sticker Origin</a>
+        <a class="pill secondary" id="tgPrimary" href="#">💬 Telegram</a>
+        <a class="pill secondary" id="twPrimary" href="#">🐦 Twitter</a>
       </div>
       <div style="margin-top:12px">
-        <span class="badge">Contract: <code id="contractAddr">(add your jetton address)</code></span>
+        <span class="badge">
+          Contract:
+          <a id="contractLink" href="#" target="_blank" rel="noopener">
+            <code id="contractAddr"></code>
+          </a>
+        </span>
       </div>
     </section>
 
-    <!-- Sticker Proofs: bold slideshow -->
+    <!-- Sticker Proofs Slideshow -->
     <section class="proofs">
       <h2>Sticker Proofs</h2>
       <div class="proof-hero" id="proofHero">
@@ -156,9 +160,9 @@
 
     <section style="margin:34px 0">
       <div class="grid">
-        <article class="card"><h3>What is ANIMAL?</h3><p class="muted">A fun TON-native meme token that pays homage to Telegram’s first custom sticker and the culture it unlocked.</p></article>
-        <article class="card"><h3>Why stickers?</h3><p class="muted">Stickers turned chats into playgrounds. ANIMAL captures that energy — fast, visual, shareable — then pairs it with on-chain fun.</p></article>
-        <article class="card"><h3>How to join</h3><p class="muted">Grab some ANIMAL on DEX, join the Telegram, and drop your best sticker-powered memes. Simple.</p></article>
+        <article class="card"><h3>What is ANIMALS?</h3><p class="muted">A fun TON-native meme token that pays homage to Telegram’s first custom sticker and the culture it unlocked.</p></article>
+        <article class="card"><h3>Why stickers?</h3><p class="muted">Stickers turned chats into playgrounds. ANIMALS captures that energy — fast, visual, shareable — then pairs it with on-chain fun.</p></article>
+        <article class="card"><h3>How to join</h3><p class="muted">Grab some ANIMALS on DeDust, join the Telegram, and drop your best sticker-powered memes. Simple.</p></article>
       </div>
     </section>
 
@@ -170,10 +174,9 @@
     <footer>
       <hr style="border:0; border-top:1px solid var(--line); margin-bottom:12px">
       <div style="display:flex; gap:14px; flex-wrap:wrap; align-items:center; justify-content:space-between">
-        <small class="muted">© <span id="year"></span> ANIMAL · Built with sticker energy · Not financial advice.</small>
+        <small class="muted">© <span id="year"></span> ANIMALS · Built with sticker energy · Not financial advice.</small>
         <div style="display:flex; gap:10px">
-          <a class="btn" href="https://dexscreener.com/" target="_blank" rel="noopener">Dexscreener</a>
-          <a class="btn" href="https://ston.fi/" target="_blank" rel="noopener">Ston.fi</a>
+          <a class="btn" href="https://www.geckoterminal.com/ton/pools/EQBpfJcKGLeI_Hjndfc1HiDD2OFC98S0O9rdaZhmwtlJFGtQ" target="_blank" rel="noopener">Chart</a>
           <a class="btn" href="https://dedust.io/" target="_blank" rel="noopener">DeDust</a>
           <a class="btn" href="https://x.com/animalstoncoin" target="_blank" rel="noopener">Twitter</a>
         </div>
@@ -181,189 +184,231 @@
     </footer>
   </main>
 
-  <script>
-    /* ---------- Your real links (static) ---------- */
-    const CONTRACT_ADDRESS   = "PASTE_YOUR_JETTON_ADDRESS";
-    const STONFI_LINK        = "https://dedust.io/swap/TON/EQBDc5nGD52r2GMIBo4tXaf4qdhUdgod9OxHhRcuRKjBryeJ";
-    const DEXSCREENER_LINK   = "https://www.geckoterminal.com/ton/pools/EQBpfJcKGLeI_Hjndfc1HiDD2OFC98S0O9rdaZhmwtlJFGtQ";
-    const TELEGRAM_LINK      = "https://t.me/animalstoncoin";
-    const TWITTER_LINK       = "https://x.com/animalstoncoin";
+<script>
+/* ---------- Config ---------- */
+const CONTRACT_ADDRESS = "EQBDc5nGD52r2GMIBo4tXaf4qdhUdgod9OxHhRcuRKjBryeJ";
+const DEDUST_LINK      = "https://dedust.io/swap/TON/" + CONTRACT_ADDRESS;
+const CHART_LINK       = "https://www.geckoterminal.com/ton/pools/EQBpfJcKGLeI_Hjndfc1HiDD2OFC98S0O9rdaZhmwtlJFGtQ";
+const TELEGRAM_LINK    = "https://t.me/animalstoncoin";
+const TWITTER_LINK     = "https://x.com/animalstoncoin";
+const TONVIEWER_LINK   = "https://tonviewer.com/" + CONTRACT_ADDRESS;
 
-    document.addEventListener('DOMContentLoaded', ()=>{
-      document.getElementById('year').textContent = new Date().getFullYear();
-      document.getElementById('contractAddr').textContent = CONTRACT_ADDRESS || "(add your jetton address)";
-      const setHref=(el,url)=>{if(el&&url){el.href=url;el.target='_blank';el.rel='noopener'}};
-      setHref(document.getElementById('buyBtn'), STONFI_LINK);
-      setHref(document.getElementById('chartBtn'), DEXSCREENER_LINK);
-      setHref(document.getElementById('tgBtn'), TELEGRAM_LINK);
-      setHref(document.getElementById('buyPrimary'), STONFI_LINK);
-      setHref(document.getElementById('chartPrimary'), DEXSCREENER_LINK);
-    });
+/* ---------- Wire links + contract ---------- */
+document.addEventListener('DOMContentLoaded', ()=>{
+  document.getElementById('year').textContent = new Date().getFullYear();
+  document.getElementById('contractAddr').textContent = CONTRACT_ADDRESS;
+  document.getElementById('contractLink').href = TONVIEWER_LINK;
 
-    /* ===================================
-       Proofs Slideshow
-       =================================== */
-    const PROOFS = [
-      "https://i.ibb.co/67P7LB1F/image.jpg",
-      "https://i.ibb.co/fd9HqwvW/image.jpg",
-      "https://i.ibb.co/d0Sg6rMp/image.jpg"
-    ];
-    const SLIDE_MS = 3500; // change every X ms
-    let proofIdx = 0, proofTimer = null;
+  const setHref=(id,url)=>{const el=document.getElementById(id); if(el&&url){el.href=url;el.target='_blank';el.rel='noopener'}};
+  setHref('buyBtn',DEDUST_LINK); setHref('buyPrimary',DEDUST_LINK);
+  setHref('chartBtn',CHART_LINK); setHref('chartPrimary',CHART_LINK);
+  setHref('tgBtn',TELEGRAM_LINK); setHref('tgPrimary',TELEGRAM_LINK);
+  setHref('twBtn',TWITTER_LINK); setHref('twPrimary',TWITTER_LINK);
+});
 
-    function preload(urls){ urls.forEach(u=>{ const i=new Image(); i.src=u; }); }
+/* ===================================
+   Proofs Slideshow
+   =================================== */
+const PROOFS = [
+  "https://i.ibb.co/67P7LB1F/image.jpg",
+  "https://i.ibb.co/fd9HqwvW/image.jpg",
+  "https://i.ibb.co/d0Sg6rMp/image.jpg"
+];
+const SLIDE_MS = 3500; // change every X ms
+let proofIdx = 0, proofTimer = null;
 
-    function setProof(idx){
-      proofIdx = (idx + PROOFS.length) % PROOFS.length;
-      const img = document.getElementById('proofImg');
-      const link = document.getElementById('proofLink');
-      img.classList.remove('show'); // fade out
-      const nextUrl = PROOFS[proofIdx];
-      const tmp = new Image();
-      tmp.onload = ()=>{
-        img.src = nextUrl;
-        img.classList.add('show');
-      };
-      tmp.src = nextUrl + "?v=" + Date.now(); // cache-bust
-      link.href = nextUrl;
+function preload(urls){ urls.forEach(u=>{ const i=new Image(); i.src=u; }); }
 
-      // update dots
-      const dots = document.querySelectorAll('.dot');
-      dots.forEach((d,i)=> d.classList.toggle('active', i===proofIdx));
-    }
+function setProof(idx){
+  proofIdx = (idx + PROOFS.length) % PROOFS.length;
+  const img = document.getElementById('proofImg');
+  const link = document.getElementById('proofLink');
+  img.classList.remove('show'); // fade out
+  const nextUrl = PROOFS[proofIdx];
+  const tmp = new Image();
+  tmp.onload = ()=>{
+    img.src = nextUrl;
+    img.classList.add('show');
+  };
+  tmp.src = nextUrl + "?v=" + Date.now(); // cache-bust
+  link.href = nextUrl;
 
-    function startProofs(){
-      if (proofTimer) clearInterval(proofTimer);
-      setProof(0);
+  // update dots
+  const dots = document.querySelectorAll('.dot');
+  dots.forEach((d,i)=> d.classList.toggle('active', i===proofIdx));
+}
+
+function startProofs(){
+  if (proofTimer) clearInterval(proofTimer);
+  setProof(0);
+  proofTimer = setInterval(()=> setProof(proofIdx+1), SLIDE_MS);
+}
+
+function buildDots(){
+  const holder = document.getElementById('proofDots');
+  holder.innerHTML = "";
+  PROOFS.forEach((_, i)=>{
+    const d = document.createElement('div');
+    d.className = 'dot' + (i===0 ? ' active' : '');
+    d.addEventListener('click', ()=>{
+      setProof(i);
+      if (proofTimer){ clearInterval(proofTimer); }
       proofTimer = setInterval(()=> setProof(proofIdx+1), SLIDE_MS);
-    }
-
-    function buildDots(){
-      const holder = document.getElementById('proofDots');
-      holder.innerHTML = "";
-      PROOFS.forEach((_, i)=>{
-        const d = document.createElement('div');
-        d.className = 'dot' + (i===0 ? ' active' : '');
-        d.addEventListener('click', ()=>{
-          setProof(i);
-          if (proofTimer){ clearInterval(proofTimer); }
-          proofTimer = setInterval(()=> setProof(proofIdx+1), SLIDE_MS);
-        });
-        holder.appendChild(d);
-      });
-    }
-
-    function wireHoverPause(){
-      const hero = document.getElementById('proofHero');
-      hero.addEventListener('mouseenter', ()=>{ if(proofTimer){ clearInterval(proofTimer); proofTimer=null; }});
-      hero.addEventListener('mouseleave', ()=>{ if(!proofTimer){ proofTimer=setInterval(()=> setProof(proofIdx+1), SLIDE_MS); }});
-    }
-
-    /* ===================================
-       Sticker discovery for Wall
-       =================================== */
-    const MAX_STICKERS = 30;
-    const PATHS_TO_TRY = ["/stickers/", "./stickers/"]; // both absolute & relative
-
-    function checkImage(url){
-      return new Promise(res=>{
-        const i=new Image();
-        i.onload=()=>res(true);
-        i.onerror=()=>res(false);
-        i.src = url + "?v=" + Date.now();
-      });
-    }
-    async function resolveStickerUrl(file){
-      for(const base of PATHS_TO_TRY){
-        const url = base + file;
-        if(await checkImage(url)) return url;
-      }
-      return null;
-    }
-    async function discoverStickers(){
-      const found=[]; let misses=0;
-      for(let i=1;i<=MAX_STICKERS;i++){
-        const name=`animal${i}.png`;
-        const url = await resolveStickerUrl(name);
-        if(url){ found.push({url}); misses=0; }
-        else   { misses++; if(misses>=3 && found.length) break; }
-      }
-      return found;
-    }
-    function buildWall(list){
-      const wall=document.getElementById('stickerWall');
-      wall.innerHTML="";
-      list.forEach(it=>{
-        const fig=document.createElement('figure');
-        const a=document.createElement('a'); a.href=it.url; a.target="_blank"; a.rel="noopener";
-        const img=document.createElement('img'); img.src=it.url; img.alt="Sticker";
-        a.appendChild(img); fig.appendChild(a); wall.appendChild(fig);
-      });
-    }
-
-    /* ===================================
-       Rain background
-       =================================== */
-    const MOBILE_BREAKPOINT = 780;
-    const DESKTOP = { DENSITY_BASE:26000, SIZE_MIN:28, SIZE_MAX:80, SPEED_MIN:0.8, SPEED_MAX:2.2, OPACITY:0.95 };
-    const CONFETTI= { DENSITY_BASE:42000, SIZE_MIN:18, SIZE_MAX:46, SPEED_MIN:0.6, SPEED_MAX:1.6, OPACITY:0.9 };
-    const cvs=document.getElementById('rain');
-    const ctx=cvs.getContext('2d',{alpha:true});
-
-    function isMobile(){ return Math.max(innerWidth, innerHeight) < MOBILE_BREAKPOINT; }
-    let S=DESKTOP;
-    function fit(){
-      const dpr=Math.max(1,Math.min(2,devicePixelRatio||1));
-      cvs.width=Math.floor(innerWidth*dpr);cvs.height=Math.floor(innerHeight*dpr);
-      cvs.style.width=innerWidth+'px';cvs.style.height=innerHeight+'px';
-      ctx.setTransform(dpr,0,0,dpr,0,0);S=isMobile()?CONFETTI:DESKTOP;
-    }
-    addEventListener('resize',fit,{passive:true}); fit();
-
-    let icons=[],drops=[],rafId=0;
-    function targetCount(){return Math.max(16,Math.min(120,Math.floor((innerWidth*innerHeight)/S.DENSITY_BASE)));}
-    function spawn(){
-      const img=icons[(Math.random()*icons.length)|0];
-      const size=S.SIZE_MIN+Math.random()*(S.SIZE_MAX-S.SIZE_MIN);
-      return{x:Math.random()*innerWidth,y:-80,vy:S.SPEED_MIN+Math.random()*(S.SPEED_MAX-S.SPEED_MIN),
-        size,rot:Math.random()*Math.PI*2,vr:(Math.random()-.5)*0.02,sway:(Math.random()-.5)*.7,img};
-    }
-    function step(){
-      ctx.clearRect(0,0,innerWidth,innerHeight);
-      for(const d of drops){
-        d.y+=d.vy;d.x+=Math.sin(d.y*.02)*d.sway;d.rot+=d.vr;
-        ctx.save();ctx.translate(d.x,d.y);ctx.rotate(d.rot);ctx.globalAlpha=S.OPACITY;
-        ctx.drawImage(d.img,-d.size/2,-d.size/2,d.size,d.size);ctx.restore();
-      }
-      for(let i=drops.length-1;i>=0;i--)if(drops[i].y>innerHeight+100)drops.splice(i,1);
-      if(icons.length&&drops.length<targetCount())drops.push(spawn());
-      rafId=requestAnimationFrame(step);
-    }
-    if(!rafId)rafId=requestAnimationFrame(step);
-
-    function loadIcons(list){
-      return Promise.all(list.map(it=>new Promise(r=>{
-        const im=new Image();im.onload=()=>r(im);im.onerror=()=>r(null);im.src=it.url;
-      }))).then(arr=>arr.filter(Boolean));
-    }
-
-    /* ===================================
-       Boot
-       =================================== */
-    document.addEventListener('DOMContentLoaded', async ()=>{
-      // Proofs slideshow
-      preload(PROOFS);
-      buildDots();
-      startProofs();
-      wireHoverPause();
-
-      // Sticker wall + rain icons
-      const files=await discoverStickers(); buildWall(files);
-      if(!files.length) return;
-      const first=await loadIcons(files.slice(0,6)); icons.push(...first);
-      for(let i=0;i<12;i++) drops.push(spawn());
-      if(files.length>6){ const rest=await loadIcons(files.slice(6)); icons.push(...rest); }
     });
-  </script>
+    holder.appendChild(d);
+  });
+}
+
+function wireHoverPause(){
+  const hero = document.getElementById('proofHero');
+  hero.addEventListener('mouseenter', ()=>{ if(proofTimer){ clearInterval(proofTimer); proofTimer=null; }});
+  hero.addEventListener('mouseleave', ()=>{ if(!proofTimer){ proofTimer=setInterval(()=> setProof(proofIdx+1), SLIDE_MS); }});
+}
+
+/* ===================================
+   Sticker discovery for Wall (GitHub Pages friendly)
+   =================================== */
+const MAX_STICKERS = 30;
+const PATHS_TO_TRY = ["./stickers/"]; // relative path only
+
+function checkImage(url){
+  return new Promise(res=>{
+    const i=new Image();
+    i.onload=()=>res(true);
+    i.onerror=()=>res(false);
+    i.src = url + (url.includes('?')?'&':'?') + "v=" + Date.now();
+  });
+}
+async function resolveStickerUrl(file){
+  for(const base of PATHS_TO_TRY){
+    const url = base + file;
+    if(await checkImage(url)) return url;
+  }
+  return null;
+}
+async function discoverStickers(){
+  const found=[]; let misses=0;
+  for(let i=1;i<=MAX_STICKERS;i++){
+    const name=`animal${i}.png`;
+    const url = await resolveStickerUrl(name);
+    if(url){ found.push({url}); misses=0; }
+    else   { misses++; if(misses>=3 && found.length) break; }
+  }
+  return found;
+}
+function buildWall(list){
+  const wall=document.getElementById('stickerWall');
+  wall.innerHTML="";
+  if(!list.length){
+    wall.innerHTML = "<p style='color:#ffb3b3'>Upload images to <code>/stickers/</code> named <code>animal1.png</code>, <code>animal2.png</code>, …</p>";
+    return;
+  }
+  list.forEach(it=>{
+    const fig=document.createElement('figure');
+    const a=document.createElement('a'); a.href=it.url; a.target="_blank"; a.rel="noopener";
+    const img=document.createElement('img'); img.src=it.url; img.alt="Sticker";
+    a.appendChild(img); fig.appendChild(a); wall.appendChild(fig);
+  });
+}
+
+/* ===================================
+   Falling Sticker Rain (canvas)
+   =================================== */
+const MOBILE_BREAKPOINT = 780;
+const DESKTOP = { DENSITY_BASE:26000, SIZE_MIN:28, SIZE_MAX:80, SPEED_MIN:0.8, SPEED_MAX:2.2, OPACITY:0.95 };
+const CONFETTI= { DENSITY_BASE:42000, SIZE_MIN:18, SIZE_MAX:46, SPEED_MIN:0.6, SPEED_MAX:1.6, OPACITY:0.9 };
+
+const cvs=document.getElementById('rain');
+const ctx=cvs.getContext('2d',{alpha:true});
+
+function isMobile(){ return Math.max(innerWidth, innerHeight) < MOBILE_BREAKPOINT; }
+let S=DESKTOP;
+
+function fit(){
+  const dpr=Math.max(1,Math.min(2,devicePixelRatio||1));
+  cvs.width=Math.floor(innerWidth*dpr);cvs.height=Math.floor(innerHeight*dpr);
+  cvs.style.width=innerWidth+'px';cvs.style.height=innerHeight+'px';
+  ctx.setTransform(dpr,0,0,dpr,0,0);S=isMobile()?CONFETTI:DESKTOP;
+}
+addEventListener('resize',fit,{passive:true}); fit();
+
+let icons=[],drops=[],rafId=0;
+function targetCount(){return Math.max(16,Math.min(120,Math.floor((innerWidth*innerHeight)/S.DENSITY_BASE)));}
+function spawn(){
+  const img=icons.length?icons[(Math.random()*icons.length)|0]:null;
+  const size=S.SIZE_MIN+Math.random()*(S.SIZE_MAX-S.SIZE_MIN);
+  return{
+    x:Math.random()*innerWidth,
+    y:-80,
+    vy:S.SPEED_MIN+Math.random()*(S.SPEED_MAX-S_SPEED_MIN),
+    size,
+    rot:Math.random()*Math.PI*2,
+    vr:(Math.random()-.5)*0.02,
+    sway:(Math.random()-.5)*.7,
+    img
+  };
+}
+function step(){
+  ctx.clearRect(0,0,innerWidth,innerHeight);
+  for(const d of drops){
+    d.y+=d.vy;
+    d.x+=Math.sin(d.y*.02)*d.sway;
+    d.rot+=d.vr;
+    if(d.img){
+      ctx.save();
+      ctx.translate(d.x,d.y);
+      ctx.rotate(d.rot);
+      ctx.globalAlpha=S.OPACITY;
+      ctx.drawImage(d.img,-d.size/2,-d.size/2,d.size,d.size);
+      ctx.restore();
+    }
+  }
+  // prune off-screen
+  for(let i=drops.length-1;i>=0;i--){
+    if(drops[i].y>innerHeight+100) drops.splice(i,1);
+  }
+  // top up to target
+  while(icons.length && drops.length<targetCount()){
+    drops.push(spawn());
+  }
+  rafId=requestAnimationFrame(step);
+}
+if(!rafId) rafId=requestAnimationFrame(step);
+
+function loadIcons(list){
+  return Promise.all(list.map(it=>new Promise(r=>{
+    const im=new Image();
+    im.onload = ()=>r(im);
+    im.onerror= ()=>r(null);
+    im.src    = it.url;
+  }))).then(arr=>arr.filter(Boolean));
+}
+
+/* ===================================
+   Boot sequence
+   =================================== */
+document.addEventListener('DOMContentLoaded', async ()=>{
+  // Proofs slideshow
+  preload(PROOFS);
+  buildDots();
+  startProofs();
+  wireHoverPause();
+
+  // Sticker wall + rain icons
+  const files=await discoverStickers();
+  buildWall(files);
+
+  if(files.length){
+    const first=await loadIcons(files.slice(0,8));
+    if(first.length) icons.push(...first);
+    // seed a few to show immediately
+    for(let i=0;i<12;i++) drops.push(spawn());
+    if(files.length>8){
+      const rest=await loadIcons(files.slice(8));
+      if(rest.length) icons.push(...rest);
+    }
+  }
+});
+</script>
 </body>
 </html>
