@@ -29,7 +29,6 @@
     a{color:var(--text); text-decoration:none}
     .wrap{max-width:1100px; margin:0 auto; padding:0 18px}
 
-    /* Keep content above rain */
     header, main, footer{position:relative; z-index:1;}
     header{
       position:sticky; top:0;
@@ -52,9 +51,6 @@
     .primary{background:linear-gradient(180deg, rgba(20,168,255,.9), rgba(0,122,255,.9)); border:none; color:white; font-weight:700;}
     .secondary{border:1px solid var(--line); background:rgba(255,255,255,.04);}
     .pill{display:inline-flex; align-items:center; gap:8px; padding:12px 16px; border-radius:14px; box-shadow:var(--glow)}
-    .ticker{overflow:hidden; border-top:1px solid var(--line); border-bottom:1px solid var(--line); background:rgba(255,255,255,.02)}
-    .ticker .lane{display:flex; gap:40px; padding:10px 0; animation:scroll 35s linear infinite}
-    @keyframes scroll { from{transform:translateX(0)} to{transform:translateX(-50%)} }
     .grid{display:grid; gap:16px; grid-template-columns:repeat(12,1fr)}
     .card{grid-column: span 4; background:var(--card); border:1px solid var(--line); border-radius:18px; padding:16px}
     @media (max-width:900px){ .card{grid-column:span 6} }
@@ -67,12 +63,10 @@
     .wall img{width:100%; height:120px; object-fit:contain; display:block}
     footer{margin:50px 0 80px; opacity:.9}
 
-    /* Rain canvas BEHIND all content */
     #rain{position:fixed; inset:0; pointer-events:none; z-index:0;}
   </style>
 </head>
 <body>
-  <!-- Background rain -->
   <canvas id="rain"></canvas>
 
   <header>
@@ -107,10 +101,25 @@
       </div>
     </section>
 
-    <section class="ticker" aria-label="meme ticker">
-      <div class="lane">
-        <span>🐾 ANIMAL • Sticker Energy • TON • Telegram • Meme Culture • Buy • HODL • GM •</span>
-        <span>🐾 ANIMAL • Sticker Energy • TON • Telegram • Meme Culture • Buy • HODL • GM •</span>
+    <!-- Sticker Proofs section -->
+    <section class="proofs">
+      <h2>Sticker Proofs</h2>
+      <div class="wall">
+        <figure>
+          <a href="https://i.ibb.co/67P7LB1F/image.jpg" target="_blank" rel="noopener">
+            <img src="https://i.ibb.co/67P7LB1F/image.jpg" alt="Sticker Proof 1">
+          </a>
+        </figure>
+        <figure>
+          <a href="https://i.ibb.co/fd9HqwvW/image.jpg" target="_blank" rel="noopener">
+            <img src="https://i.ibb.co/fd9HqwvW/image.jpg" alt="Sticker Proof 2">
+          </a>
+        </figure>
+        <figure>
+          <a href="https://i.ibb.co/d0Sg6rMp/image.jpg" target="_blank" rel="noopener">
+            <img src="https://i.ibb.co/d0Sg6rMp/image.jpg" alt="Sticker Proof 3">
+          </a>
+        </figure>
       </div>
     </section>
 
@@ -160,19 +169,16 @@
       setHref(document.getElementById('chartPrimary'), DEXSCREENER_LINK);
     });
 
-    /* ===================================
-       Auto-discover stickers (animal1..30)
-       Tries /stickers/ and ./stickers/
-       =================================== */
+    /* Sticker discovery for Wall */
     const MAX_STICKERS = 30;
-    const PATHS_TO_TRY = ["/stickers/", "./stickers/"]; // absolute then relative
+    const PATHS_TO_TRY = ["/stickers/", "./stickers/"];
 
     function checkImage(url){
       return new Promise(res=>{
         const i=new Image();
         i.onload=()=>res(true);
         i.onerror=()=>res(false);
-        i.src = url + (url.includes("?") ? "&" : "?") + "v=" + Date.now(); // cache-bust
+        i.src = url + "?v=" + Date.now();
       });
     }
     async function resolveStickerUrl(file){
@@ -187,136 +193,61 @@
       for(let i=1;i<=MAX_STICKERS;i++){
         const name=`animal${i}.png`;
         const url = await resolveStickerUrl(name);
-        if(url){ found.push({name,url}); misses=0; console.log("✅", name, "->", url); }
-        else   { misses++; console.warn("❌ missing:", name); if(misses>=3 && found.length) break; }
+        if(url){ found.push({name,url}); misses=0; }
+        else   { misses++; if(misses>=3 && found.length) break; }
       }
       return found;
     }
-
-    // Build the Sticker Wall (clickable images, no captions)
     function buildWall(list){
       const wall=document.getElementById('stickerWall');
       wall.innerHTML="";
-      if(!list.length){
-        wall.innerHTML="<p style='color:#ffb3b3'>No stickers found in /stickers/</p>";
-        return;
-      }
-      for(const it of list){
+      list.forEach(it=>{
         const fig=document.createElement('figure');
         const a=document.createElement('a'); a.href=it.url; a.target="_blank"; a.rel="noopener";
         const img=document.createElement('img'); img.src=it.url; img.alt="Sticker";
         a.appendChild(img); fig.appendChild(a); wall.appendChild(fig);
-      }
+      });
     }
 
-    /* ===================================
-       Background Rain (auto-start)
-       Desktop vs Mobile (confetti) tuning
-       =================================== */
+    /* Rain background */
     const MOBILE_BREAKPOINT = 780;
     const DESKTOP = { DENSITY_BASE:26000, SIZE_MIN:28, SIZE_MAX:80, SPEED_MIN:0.8, SPEED_MAX:2.2, OPACITY:0.95 };
     const CONFETTI= { DENSITY_BASE:42000, SIZE_MIN:18, SIZE_MAX:46, SPEED_MIN:0.6, SPEED_MAX:1.6, OPACITY:0.9 };
-
     const cvs=document.getElementById('rain');
     const ctx=cvs.getContext('2d',{alpha:true});
 
     function isMobile(){ return Math.max(innerWidth, innerHeight) < MOBILE_BREAKPOINT; }
-    let S = DESKTOP;
+    let S=DESKTOP;
+    function fit(){const dpr=Math.max(1,Math.min(2,devicePixelRatio||1));
+      cvs.width=Math.floor(innerWidth*dpr);cvs.height=Math.floor(innerHeight*dpr);
+      cvs.style.width=innerWidth+'px';cvs.style.height=innerHeight+'px';
+      ctx.setTransform(dpr,0,0,dpr,0,0);S=isMobile()?CONFETTI:DESKTOP;}
+    addEventListener('resize',fit,{passive:true}); fit();
 
-    function fit(){
-      const dpr=Math.max(1,Math.min(2,devicePixelRatio||1));
-      cvs.width=Math.floor(innerWidth*dpr);
-      cvs.height=Math.floor(innerHeight*dpr);
-      cvs.style.width=innerWidth+'px';
-      cvs.style.height=innerHeight+'px';
-      ctx.setTransform(dpr,0,0,dpr,0,0);
-      S = isMobile() ? CONFETTI : DESKTOP;
-    }
-    addEventListener('resize', fit, {passive:true});
-    fit();
+    let icons=[],drops=[],rafId=0;
+    function targetCount(){return Math.max(16,Math.min(120,Math.floor((innerWidth*innerHeight)/S.DENSITY_BASE)));}
+    function spawn(){const img=icons[(Math.random()*icons.length)|0];
+      const size=S.SIZE_MIN+Math.random()*(S.SIZE_MAX-S.SIZE_MIN);
+      return{x:Math.random()*innerWidth,y:-80,vy:S.SPEED_MIN+Math.random()*(S.SPEED_MAX-S.SPEED_MIN),
+        size,rot:Math.random()*Math.PI*2,vr:(Math.random()-.5)*0.02,sway:(Math.random()-.5)*.7,img};}
+    function step(){ctx.clearRect(0,0,innerWidth,innerHeight);
+      for(const d of drops){d.y+=d.vy;d.x+=Math.sin(d.y*.02)*d.sway;d.rot+=d.vr;
+        ctx.save();ctx.translate(d.x,d.y);ctx.rotate(d.rot);ctx.globalAlpha=S.OPACITY;
+        ctx.drawImage(d.img,-d.size/2,-d.size/2,d.size,d.size);ctx.restore();}
+      for(let i=drops.length-1;i>=0;i--)if(drops[i].y>innerHeight+100)drops.splice(i,1);
+      if(icons.length&&drops.length<targetCount())drops.push(spawn());
+      rafId=requestAnimationFrame(step);}
+    if(!rafId)rafId=requestAnimationFrame(step);
 
-    let icons=[];   // loaded Image objects
-    let drops=[];   // active particles
-    let rafId=0;   // loop id
+    function loadIcons(list){return Promise.all(list.map(it=>new Promise(r=>{
+      const im=new Image();im.onload=()=>r(im);im.onerror=()=>r(null);im.src=it.url;}))).then(arr=>arr.filter(Boolean));}
 
-    function targetCount(){
-      const area = innerWidth * innerHeight;
-      return Math.max(16, Math.min(120, Math.floor(area / S.DENSITY_BASE)));
-    }
-    function spawn(){
-      const img = icons[(Math.random()*icons.length)|0];
-      const size = S.SIZE_MIN + Math.random()*(S.SIZE_MAX - S.SIZE_MIN);
-      return {
-        x: Math.random()*innerWidth,
-        y: -80,
-        vy: S.SPEED_MIN + Math.random()*(S.SPEED_MAX - S.SPEED_MIN),
-        size,
-        rot: Math.random()*Math.PI*2,
-        vr: (Math.random()-.5)*0.02,
-        sway:(Math.random()-.5)*0.7,
-        img
-      };
-    }
-    function step(){
-      ctx.clearRect(0,0,innerWidth,innerHeight);
-      for(const d of drops){
-        d.y += d.vy;
-        d.x += Math.sin(d.y*0.02)*d.sway;
-        d.rot += d.vr;
-        ctx.save();
-        ctx.translate(d.x,d.y);
-        ctx.rotate(d.rot);
-        ctx.globalAlpha = S.OPACITY;
-        ctx.drawImage(d.img, -d.size/2, -d.size/2, d.size, d.size);
-        ctx.restore();
-      }
-      // recycle
-      for(let i=drops.length-1;i>=0;i--) if(drops[i].y>innerHeight+100) drops.splice(i,1);
-      // maintain density
-      if(icons.length){
-        const target = targetCount();
-        if(drops.length < target) drops.push(spawn());
-      }
-      rafId = requestAnimationFrame(step);
-    }
-
-    // Start animation loop immediately (don’t wait for images)
-    if(!rafId) rafId = requestAnimationFrame(step);
-
-    function loadIcons(list){
-      return Promise.all(list.map(it=>new Promise(res=>{
-        const im=new Image();
-        im.onload=()=>res(im);
-        im.onerror=()=>res(null);
-        im.src=it.url;
-      }))).then(arr=>arr.filter(Boolean));
-    }
-
-    // Boot ASAP (DOMContentLoaded)
-    document.addEventListener('DOMContentLoaded', async ()=>{
-      const files = await discoverStickers();
-      buildWall(files);
-
-      if(!files.length){
-        console.warn("No stickers discovered. Ensure /stickers/animal1.png etc. exist (case-sensitive).");
-        return;
-      }
-
-      // Load a few first so rain begins immediately
-      const firstBatch = files.slice(0, Math.min(6, files.length));
-      const restBatch  = files.slice(firstBatch.length);
-
-      const firstIcons = await loadIcons(firstBatch);
-      icons.push(...firstIcons);
-
-      // Prefill several drops right away
-      for(let i=0;i<Math.min(12, Math.max(6, icons.length*2)); i++) drops.push(spawn());
-
-      // Load remaining icons progressively
-      if(restBatch.length){
-        const moreIcons = await loadIcons(restBatch);
-        icons.push(...moreIcons);
-      }
+    document.addEventListener('DOMContentLoaded',async()=>{
+      const files=await discoverStickers();buildWall(files);
+      if(!files.length)return;
+      const first=await loadIcons(files.slice(0,6));icons.push(...first);
+      for(let i=0;i<12;i++)drops.push(spawn());
+      if(files.length>6){const rest=await loadIcons(files.slice(6));icons.push(...rest);}
     });
   </script>
 </body>
