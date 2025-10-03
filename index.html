@@ -29,6 +29,7 @@
     a{color:var(--text); text-decoration:none}
     .wrap{max-width:1100px; margin:0 auto; padding:0 18px}
 
+    /* Keep content above rain */
     header, main, footer{position:relative; z-index:1;}
     header{
       position:sticky; top:0;
@@ -57,16 +58,60 @@
     @media (max-width:640px){ .card{grid-column:span 12} }
     .card h3{margin:4px 0 8px 0}
     .muted{color:var(--muted)}
+
+    /* Sticker Wall grid */
     .wall{display:grid; grid-template-columns:repeat(auto-fill, minmax(120px, 1fr)); gap:12px}
     .wall figure{margin:0; padding:10px; background:rgba(255,255,255,.03); border:1px solid var(--line); border-radius:14px}
     .wall a{display:block}
     .wall img{width:100%; height:120px; object-fit:contain; display:block}
+
+    /* Footer */
     footer{margin:50px 0 80px; opacity:.9}
 
+    /* Rain canvas BEHIND all content */
     #rain{position:fixed; inset:0; pointer-events:none; z-index:0;}
+
+    /* ===== Proofs Slideshow (bold hero image) ===== */
+    .proofs{margin:26px 0 10px}
+    .proofs h2{margin:0 0 10px 0}
+    .proof-hero{
+      position:relative;
+      width:100%;
+      border:1px solid var(--line);
+      border-radius:18px;
+      overflow:hidden;
+      background:rgba(255,255,255,.03);
+      box-shadow: var(--glow);
+    }
+    .proof-hero img{
+      width:100%;
+      height: clamp(220px, 38vw, 520px);   /* nice responsive height */
+      object-fit: cover;                    /* bold crop */
+      display:block;
+      opacity:0;
+      transition: opacity .6s ease;
+    }
+    .proof-hero img.show{ opacity:1; }
+
+    .dots{
+      position:absolute; left:0; right:0; bottom:10px;
+      display:flex; gap:8px; justify-content:center; align-items:center;
+      padding:0 10px;
+    }
+    .dot{
+      width:10px; height:10px; border-radius:50%;
+      background:rgba(255,255,255,.35); border:1px solid rgba(255,255,255,.5);
+      cursor:pointer; transition:transform .2s ease, background .2s ease;
+    }
+    .dot.active{ background:#fff; transform:scale(1.1); }
+    .proof-hero a.full{
+      position:absolute; inset:0;   /* make image clickable to open full */
+      z-index:2;
+    }
   </style>
 </head>
 <body>
+  <!-- Background rain -->
   <canvas id="rain"></canvas>
 
   <header>
@@ -101,25 +146,13 @@
       </div>
     </section>
 
-    <!-- Sticker Proofs section -->
+    <!-- Sticker Proofs: bold slideshow -->
     <section class="proofs">
       <h2>Sticker Proofs</h2>
-      <div class="wall">
-        <figure>
-          <a href="https://i.ibb.co/67P7LB1F/image.jpg" target="_blank" rel="noopener">
-            <img src="https://i.ibb.co/67P7LB1F/image.jpg" alt="Sticker Proof 1">
-          </a>
-        </figure>
-        <figure>
-          <a href="https://i.ibb.co/fd9HqwvW/image.jpg" target="_blank" rel="noopener">
-            <img src="https://i.ibb.co/fd9HqwvW/image.jpg" alt="Sticker Proof 2">
-          </a>
-        </figure>
-        <figure>
-          <a href="https://i.ibb.co/d0Sg6rMp/image.jpg" target="_blank" rel="noopener">
-            <img src="https://i.ibb.co/d0Sg6rMp/image.jpg" alt="Sticker Proof 3">
-          </a>
-        </figure>
+      <div class="proof-hero" id="proofHero">
+        <img id="proofImg" src="" alt="Sticker Proof" />
+        <a id="proofLink" class="full" href="#" target="_blank" rel="noopener" aria-label="Open full image"></a>
+        <div class="dots" id="proofDots"></div>
       </div>
     </section>
 
@@ -169,7 +202,71 @@
       setHref(document.getElementById('chartPrimary'), DEXSCREENER_LINK);
     });
 
-    /* Sticker discovery for Wall */
+    /* ===================================
+       Proofs Slideshow
+       =================================== */
+    const PROOFS = [
+      "https://i.ibb.co/67P7LB1F/image.jpg",
+      "https://i.ibb.co/fd9HqwvW/image.jpg",
+      "https://i.ibb.co/d0Sg6rMp/image.jpg"
+    ];
+    const SLIDE_MS = 3500; // change every X ms
+    let proofIdx = 0, proofTimer = null;
+
+    function preload(urls){ urls.forEach(u=>{ const i=new Image(); i.src=u; }); }
+
+    function setProof(idx){
+      proofIdx = (idx + PROOFS.length) % PROOFS.length;
+      const img = document.getElementById('proofImg');
+      const link = document.getElementById('proofLink');
+      img.classList.remove('show'); // fade out
+      // Once the new image loads, fade in
+      const nextUrl = PROOFS[proofIdx];
+      const tmp = new Image();
+      tmp.onload = ()=>{
+        img.src = nextUrl;
+        img.classList.add('show');
+      };
+      tmp.src = nextUrl + "?v=" + Date.now(); // cache-bust
+      link.href = nextUrl;
+
+      // update dots
+      const dots = document.querySelectorAll('.dot');
+      dots.forEach((d,i)=> d.classList.toggle('active', i===proofIdx));
+    }
+
+    function startProofs(){
+      if (proofTimer) clearInterval(proofTimer);
+      setProof(0);
+      proofTimer = setInterval(()=> setProof(proofIdx+1), SLIDE_MS);
+    }
+
+    function buildDots(){
+      const holder = document.getElementById('proofDots');
+      holder.innerHTML = "";
+      PROOFS.forEach((_, i)=>{
+        const d = document.createElement('div');
+        d.className = 'dot' + (i===0 ? ' active' : '');
+        d.addEventListener('click', ()=>{
+          setProof(i);
+          // reset timer on manual change
+          if (proofTimer){ clearInterval(proofTimer); }
+          proofTimer = setInterval(()=> setProof(proofIdx+1), SLIDE_MS);
+        });
+        holder.appendChild(d);
+      });
+    }
+
+    // Pause on hover (desktop nicety)
+    function wireHoverPause(){
+      const hero = document.getElementById('proofHero');
+      hero.addEventListener('mouseenter', ()=>{ if(proofTimer){ clearInterval(proofTimer); proofTimer=null; }});
+      hero.addEventListener('mouseleave', ()=>{ if(!proofTimer){ proofTimer=setInterval(()=> setProof(proofIdx+1), SLIDE_MS); }});
+    }
+
+    /* ===================================
+       Sticker discovery for Wall
+       =================================== */
     const MAX_STICKERS = 30;
     const PATHS_TO_TRY = ["/stickers/", "./stickers/"];
 
@@ -209,7 +306,9 @@
       });
     }
 
-    /* Rain background */
+    /* ===================================
+       Rain background
+       =================================== */
     const MOBILE_BREAKPOINT = 780;
     const DESKTOP = { DENSITY_BASE:26000, SIZE_MIN:28, SIZE_MAX:80, SPEED_MIN:0.8, SPEED_MAX:2.2, OPACITY:0.95 };
     const CONFETTI= { DENSITY_BASE:42000, SIZE_MIN:18, SIZE_MAX:46, SPEED_MIN:0.6, SPEED_MAX:1.6, OPACITY:0.9 };
@@ -242,13 +341,23 @@
     function loadIcons(list){return Promise.all(list.map(it=>new Promise(r=>{
       const im=new Image();im.onload=()=>r(im);im.onerror=()=>r(null);im.src=it.url;}))).then(arr=>arr.filter(Boolean));}
 
-    document.addEventListener('DOMContentLoaded',async()=>{
-      const files=await discoverStickers();buildWall(files);
-      if(!files.length)return;
-      const first=await loadIcons(files.slice(0,6));icons.push(...first);
-      for(let i=0;i<12;i++)drops.push(spawn());
-      if(files.length>6){const rest=await loadIcons(files.slice(6));icons.push(...rest);}
+    /* ===================================
+       Boot
+       =================================== */
+    document.addEventListener('DOMContentLoaded', async ()=>{
+      // Proofs slideshow
+      preload(PROOFS);
+      buildDots();
+      startProofs();
+      wireHoverPause();
+
+      // Sticker wall + rain icons
+      const files=await discoverStickers(); buildWall(files);
+      if(!files.length) return;
+      const first=await loadIcons(files.slice(0,6)); icons.push(...first);
+      for(let i=0;i<12;i++) drops.push(spawn());
+      if(files.length>6){ const rest=await loadIcons(files.slice(6)); icons.push(...rest); }
     });
   </script>
 </body>
-</html>
+      </html>
