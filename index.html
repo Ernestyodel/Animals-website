@@ -11,7 +11,8 @@
     --bg:#03050a;--card:rgba(15,25,40,.6);--line:rgba(255,255,255,.08);
     --text:#d7e9ff;--muted:#9bc5ff;--accent:#14a8ff;--glow:0 8px 40px rgba(20,168,255,.35);
   }
-  *{box-sizing:border-box} html,body{margin:0;height:100%;background:
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:
     radial-gradient(1200px 800px at 20% -10%, rgba(0,122,255,.25), transparent 60%),
     radial-gradient(1000px 700px at 110% 10%, rgba(20,168,255,.18), transparent 65%),var(--bg);
     color:var(--text);font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
@@ -45,7 +46,24 @@
   footer{margin:50px 0 80px;opacity:.9}
   #rain{position:fixed;inset:0;pointer-events:none;z-index:0}
 
-  /* Proofs slideshow (show full image, no crop) */
+  /* Price card under hero */
+  .price-card{margin-top:14px;display:flex;flex-direction:column;gap:6px;width:100%;max-width:480px;
+    border:1px solid var(--line);background:rgba(255,255,255,.04);border-radius:14px;padding:12px 14px;box-shadow:var(--glow)}
+  .price-row{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+  .price-value{font-size:clamp(20px,3.5vw,28px);font-weight:800}
+  .price-chg{font-weight:700;padding:2px 8px;border-radius:999px;font-size:14px;border:1px solid var(--line);background:rgba(255,255,255,.05)}
+  .price-chg.up{color:#4ade80;border-color:rgba(74,222,128,.35);background:rgba(74,222,128,.10)}
+  .price-chg.down{color:#f87171;border-color:rgba(248,113,113,.35);background:rgba(248,113,113,.10)}
+  .price-sub{color:var(--muted);font-size:14px;display:flex;gap:10px;flex-wrap:wrap}
+
+  /* Mini price pill in header */
+  .price-pill{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;
+    border:1px solid var(--line);background:rgba(255,255,255,.06);font-weight:700;font-size:14px;box-shadow:var(--glow)}
+  .price-pill.up{color:#4ade80;border-color:rgba(74,222,128,.35);background:rgba(74,222,128,.10)}
+  .price-pill.down{color:#f87171;border-color:rgba(248,113,113,.35);background:rgba(248,113,113,.10)}
+  .pill-dot{width:8px;height:8px;border-radius:50%;background:currentColor;opacity:.8}
+
+  /* Proof slideshow */
   .proofs{margin:26px 0 10px}
   .proofs h2{margin:0 0 10px}
   .proof-hero{position:relative;width:100%;border:1px solid var(--line);border-radius:18px;overflow:hidden;
@@ -71,6 +89,9 @@
       <a class="btn" id="buyBtn" href="#">Buy on DEX</a>
       <a class="btn" id="chartBtn" href="#">Chart</a>
       <a class="btn" id="tgBtn" href="#">Telegram</a>
+      <span id="pricePill" class="price-pill" aria-live="polite" title="Live price (USD)">
+        <span class="pill-dot"></span><span id="pillPrice">—</span>
+      </span>
     </div>
   </div>
 </header>
@@ -88,8 +109,18 @@
       <a class="pill secondary" id="chartPrimary" href="#">📈 View Chart</a>
       <a class="pill secondary" href="https://telegram.org/blog/stickers-revolution?setln=en" target="_blank" rel="noopener">🧩 Sticker Origin</a>
     </div>
-    <div style="margin-top:12px">
-      <span class="badge">Contract: <code id="contractAddr">(add your jetton address)</code></span>
+
+    <!-- Live Price Card -->
+    <div id="priceCard" class="price-card" aria-live="polite">
+      <div class="price-row">
+        <div class="price-value" id="priceUsd">—</div>
+        <div class="price-chg" id="priceChg">—</div>
+      </div>
+      <div class="price-sub">
+        <span>24h Vol: <strong id="vol24">—</strong></span>
+        <span>FDV: <strong id="fdv">—</strong></span>
+        <a id="chartLink" href="https://www.geckoterminal.com/ton/pools/EQBpfJcKGLeI_Hjndfc1HiDD2OFC98S0O9rdaZhmwtlJFGtQ" target="_blank" rel="noopener">Chart ↗</a>
+      </div>
     </div>
   </section>
 
@@ -98,7 +129,7 @@
     <h2>Sticker Proofs</h2>
     <div class="proof-hero" id="proofHero">
       <img id="proofImg" src="" alt="Sticker Proof" />
-      <a id="proofLink" class="full" href="#" target="_blank" rel="noopener" aria-label="Open full image"></a>
+      <a id="proofLink" class="full" href="#" target="_blank" rel="noopener"></a>
       <div class="dots" id="proofDots"></div>
     </div>
   </section>
@@ -121,142 +152,61 @@
     <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center;justify-content:space-between">
       <small class="muted">© <span id="year"></span> ANIMAL · Built with sticker energy · Not financial advice.</small>
       <div style="display:flex;gap:10px">
-        <a class="btn" href="https://dexscreener.com/" target="_blank" rel="noopener">Dexscreener</a>
-        <a class="btn" href="https://ston.fi/" target="_blank" rel="noopener">Ston.fi</a>
-        <a class="btn" href="https://dedust.io/" target="_blank" rel="noopener">DeDust</a>
+        <a class="btn" href="https://dexscreener.com/" target="_blank">Dexscreener</a>
+        <a class="btn" href="https://ston.fi/" target="_blank">Ston.fi</a>
+        <a class="btn" href="https://dedust.io/" target="_blank">DeDust</a>
+        <a class="btn" href="https://x.com/animalstoncoin" target="_blank">Twitter</a>
       </div>
     </div>
   </footer>
 </main>
 
 <script>
-  /* ---------- Basic links (edit) ---------- */
-  const CONTRACT_ADDRESS="PASTE_YOUR_JETTON_ADDRESS";
-  const STONFI_LINK="https://ston.fi/your_pair";
-  const DEXSCREENER_LINK="https://dexscreener.com/ton/yourpair";
-  const TELEGRAM_LINK="https://t.me/your_channel";
+/* ===== Config links ===== */
+const CONTRACT_ADDRESS="PASTE_YOUR_JETTON_ADDRESS";
+const STONFI_LINK="https://dedust.io/swap/TON/EQBDc5nGD52r2GMIBo4tXaf4qdhUdgod9OxHhRcuRKjBryeJ";
+const DEXSCREENER_LINK="https://www.geckoterminal.com/ton/pools/EQBpfJcKGLeI_Hjndfc1HiDD2OFC98S0O9rdaZhmwtlJFGtQ";
+const TELEGRAM_LINK="https://t.me/animalstoncoin";
+const TWITTER_LINK="https://x.com/animalstoncoin";
 
-  document.addEventListener('DOMContentLoaded',()=>{
-    document.getElementById('year').textContent=new Date().getFullYear();
-    document.getElementById('contractAddr').textContent=CONTRACT_ADDRESS||"(add your jetton address)";
-    const setHref=(el,url)=>{if(el&&url){el.href=url;el.target="_blank";el.rel="noopener"}};
-    setHref(document.getElementById('buyBtn'),STONFI_LINK);
-    setHref(document.getElementById('chartBtn'),DEXSCREENER_LINK);
-    setHref(document.getElementById('tgBtn'),TELEGRAM_LINK);
-    setHref(document.getElementById('buyPrimary'),STONFI_LINK);
-    setHref(document.getElementById('chartPrimary'),DEXSCREENER_LINK);
-  });
+/* ===== GeckoTerminal API ===== */
+const GT_NETWORK="ton";
+const GT_POOL_ID="EQBpfJcKGLeI_Hjndfc1HiDD2OFC98S0O9rdaZhmwtlJFGtQ";
+const GT_API_URL=`https://api.geckoterminal.com/api/v2/networks/${GT_NETWORK}/pools/${GT_POOL_ID}`;
 
-  /* ---------- Proofs slideshow (full image, no crop) ---------- */
-  const PROOFS=[
-    "https://i.ibb.co/67P7LB1F/image.jpg",
-    "https://i.ibb.co/fd9HqwvW/image.jpg",
-    "https://i.ibb.co/d0Sg6rMp/image.jpg"
-  ];
-  const SLIDE_MS=3500;
-  let proofIdx=0, proofTimer=null;
+const fmtUSD=(n)=>{if(!n)return"—";const v=+n;if(v>=1)return "$"+v.toFixed(4);if(v>=0.01)return "$"+v.toFixed(6);return "$"+v.toFixed(10);}
+const fmtNum=(n)=>{if(!n)return"—";const v=+n;if(v>=1e9)return(v/1e9).toFixed(2)+"B";if(v>=1e6)return(v/1e6).toFixed(2)+"M";if(v>=1e3)return(v/1e3).toFixed(2)+"k";return v.toFixed(0);}
+const fmtPct=(n)=>{if(n==null)return"—";const v=+n;const s=v>0?"+":"";return s+v.toFixed(2)+"%";}
 
-  function preload(urls){urls.forEach(u=>{const i=new Image();i.src=u;});}
-  function setProof(idx){
-    proofIdx=(idx+PROOFS.length)%PROOFS.length;
-    const img=document.getElementById('proofImg');
-    const link=document.getElementById('proofLink');
-    img.classList.remove('show');
-    const nextUrl=PROOFS[proofIdx];
-    const tmp=new Image();
-    tmp.onload=()=>{img.src=nextUrl; img.classList.add('show');};
-    tmp.src=nextUrl+"?v="+Date.now(); // cache-bust
-    link.href=nextUrl;
-    document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('active',i===proofIdx));
-  }
-  function startProofs(){ if(proofTimer)clearInterval(proofTimer); setProof(0); proofTimer=setInterval(()=>setProof(proofIdx+1),SLIDE_MS); }
-  function buildDots(){
-    const holder=document.getElementById('proofDots'); holder.innerHTML="";
-    PROOFS.forEach((_,i)=>{const d=document.createElement('div'); d.className='dot'+(i===0?' active':'');
-      d.addEventListener('click',()=>{setProof(i); if(proofTimer){clearInterval(proofTimer);} proofTimer=setInterval(()=>setProof(proofIdx+1),SLIDE_MS);});
-      holder.appendChild(d);
-    });
-  }
-  function wireHoverPause(){
-    const hero=document.getElementById('proofHero');
-    hero.addEventListener('mouseenter',()=>{if(proofTimer){clearInterval(proofTimer); proofTimer=null;}});
-    hero.addEventListener('mouseleave',()=>{if(!proofTimer){proofTimer=setInterval(()=>setProof(proofIdx+1),SLIDE_MS);}});
-  }
+async function fetchGeckoTerminal(){
+  try{
+    const res=await fetch(GT_API_URL,{headers:{"accept":"application/json"}});
+    const json=await res.json(); const attr=json?.data?.attributes||{};
+    const price=attr.price_in_usd; const ch=attr?.price_change_percentage?.h24; const vol=attr?.volume_usd?.h24; const fdv=attr?.fdv_usd;
+    // Card
+    document.getElementById("priceUsd").textContent=fmtUSD(price);
+    document.getElementById("vol24").textContent="$"+fmtNum(vol);
+    document.getElementById("fdv").textContent="$"+fmtNum(fdv);
+    const elCh=document.getElementById("priceChg"); elCh.textContent=fmtPct(ch); elCh.classList.remove("up","down"); if(ch!=null)elCh.classList.add(ch>=0?"up":"down");
+    // Pill
+    document.getElementById("pillPrice").textContent=fmtUSD(price);
+    const pill=document.getElementById("pricePill"); pill.classList.remove("up","down"); if(ch!=null)pill.classList.add(ch>=0?"up":"down");
+  }catch(e){console.warn("GT fetch failed",e);}
+}
+function startPricePolling(){fetchGeckoTerminal();setInterval(fetchGeckoTerminal,30000);}
 
-  /* ---------- Sticker Wall (auto-discover /stickers/animal#.png) ---------- */
-  const MAX_STICKERS=30, PATHS_TO_TRY=["/stickers/","./stickers/"];
-  function checkImage(url){return new Promise(res=>{const i=new Image();i.onload=()=>res(true);i.onerror=()=>res(false);i.src=url+"?v="+Date.now();});}
-  async function resolveStickerUrl(file){for(const base of PATHS_TO_TRY){const url=base+file; if(await checkImage(url))return url;} return null;}
-  async function discoverStickers(){
-    const found=[]; let miss=0;
-    for(let i=1;i<=MAX_STICKERS;i++){
-      const name=`animal${i}.png`; const url=await resolveStickerUrl(name);
-      if(url){found.push({url}); miss=0;} else {miss++; if(miss>=3 && found.length) break;}
-    } return found;
-  }
-  function buildWall(list){
-    const wall=document.getElementById('stickerWall'); wall.innerHTML="";
-    if(!list.length){ wall.innerHTML="<p style='color:#ffb3b3'>No stickers found in /stickers/</p>"; return; }
-    list.forEach(it=>{
-      const fig=document.createElement('figure');
-      const a=document.createElement('a'); a.href=it.url; a.target="_blank"; a.rel="noopener";
-      const img=document.createElement('img'); img.src=it.url; img.alt="Sticker";
-      a.appendChild(img); fig.appendChild(a); wall.appendChild(fig);
-    });
-  }
-
-  /* ---------- Rain background ---------- */
-  const MOBILE_BREAKPOINT=780;
-  const DESKTOP={DENSITY_BASE:26000,SIZE_MIN:28,SIZE_MAX:80,SPEED_MIN:.8,SPEED_MAX:2.2,OPACITY:.95};
-  const CONFETTI={DENSITY_BASE:42000,SIZE_MIN:18,SIZE_MAX:46,SPEED_MIN:.6,SPEED_MAX:1.6,OPACITY:.9};
-  const cvs=document.getElementById('rain'), ctx=cvs.getContext('2d',{alpha:true});
-  function isMobile(){return Math.max(innerWidth,innerHeight)<MOBILE_BREAKPOINT;}
-  let S=DESKTOP;
-  function fit(){
-    const dpr=Math.max(1,Math.min(2,devicePixelRatio||1));
-    cvs.width=Math.floor(innerWidth*dpr); cvs.height=Math.floor(innerHeight*dpr);
-    cvs.style.width=innerWidth+'px'; cvs.style.height=innerHeight+'px';
-    ctx.setTransform(dpr,0,0,dpr,0,0); S=isMobile()?CONFETTI:DESKTOP;
-  }
-  addEventListener('resize',fit,{passive:true}); fit();
-
-  let icons=[], drops=[], rafId=0;
-  function targetCount(){return Math.max(16,Math.min(120,Math.floor((innerWidth*innerHeight)/S.DENSITY_BASE)));}
-  function spawn(){const img=icons[(Math.random()*icons.length)|0]; const size=S.SIZE_MIN+Math.random()*(S.SIZE_MAX-S.SIZE_MIN);
-    return {x:Math.random()*innerWidth,y:-80,vy:S.SPEED_MIN+Math.random()*(S.SPEED_MAX-S.SPEED_MIN),
-      size,rot:Math.random()*Math.PI*2,vr:(Math.random()-.5)*0.02,sway:(Math.random()-.5)*.7,img};}
-  function step(){
-    ctx.clearRect(0,0,innerWidth,innerHeight);
-    for(const d of drops){
-      d.y+=d.vy; d.x+=Math.sin(d.y*.02)*d.sway; d.rot+=d.vr;
-      ctx.save(); ctx.translate(d.x,d.y); ctx.rotate(d.rot); ctx.globalAlpha=S.OPACITY;
-      ctx.drawImage(d.img,-d.size/2,-d.size/2,d.size,d.size); ctx.restore();
-    }
-    for(let i=drops.length-1;i>=0;i--) if(drops[i].y>innerHeight+100) drops.splice(i,1);
-    if(icons.length && drops.length<targetCount()) drops.push(spawn());
-    rafId=requestAnimationFrame(step);
-  }
-  if(!rafId) rafId=requestAnimationFrame(step);
-
-  function loadIcons(list){
-    return Promise.all(list.map(it=>new Promise(r=>{
-      const im=new Image(); im.onload=()=>r(im); im.onerror=()=>r(null); im.src=it.url;
-    }))).then(arr=>arr.filter(Boolean));
-  }
-
-  /* ---------- Boot ---------- */
-  document.addEventListener('DOMContentLoaded', async ()=>{
-    // proofs
-    preload(PROOFS); buildDots(); startProofs(); wireHoverPause();
-
-    // wall + rain icons
-    const files=await discoverStickers(); buildWall(files);
-    if(files.length){
-      const first=await loadIcons(files.slice(0,6)); icons.push(...first);
-      for(let i=0;i<12;i++) drops.push(spawn());
-      if(files.length>6){ const rest=await loadIcons(files.slice(6)); icons.push(...rest); }
-    }
-  });
+/* ===== Boot ===== */
+document.addEventListener("DOMContentLoaded",()=>{
+  document.getElementById("year").textContent=new Date().getFullYear();
+  document.getElementById("contractAddr").textContent=CONTRACT_ADDRESS||"(add your jetton address)";
+  const setHref=(el,url)=>{if(el)el.href=url;}
+  setHref(document.getElementById("buyBtn"),STONFI_LINK);
+  setHref(document.getElementById("chartBtn"),DEXSCREENER_LINK);
+  setHref(document.getElementById("tgBtn"),TELEGRAM_LINK);
+  setHref(document.getElementById("buyPrimary"),STONFI_LINK);
+  setHref(document.getElementById("chartPrimary"),DEXSCREENER_LINK);
+  startPricePolling();
+});
 </script>
 </body>
 </html>
