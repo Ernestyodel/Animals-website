@@ -64,18 +64,13 @@
     .wall{display:grid; grid-template-columns:repeat(auto-fill, minmax(120px, 1fr)); gap:12px}
     .wall figure{margin:0; padding:10px; background:rgba(255,255,255,.03); border:1px solid var(--line); border-radius:14px}
     .wall img{width:100%; height:120px; object-fit:contain; display:block}
-    .wall figcaption{font-size:12px; color:var(--muted); text-align:center; margin-top:6px}
     footer{margin:50px 0 80px; opacity:.9}
 
     /* Rain canvas BEHIND all content */
     #rain{position:fixed; inset:0; pointer-events:none; z-index:0;}
-
-    /* Respect reduced-motion for ticker only (rain always runs) */
-    @media (prefers-reduced-motion: reduce){ .ticker .lane{animation:none;} }
   </style>
 </head>
 <body>
-  <!-- Background rain -->
   <canvas id="rain"></canvas>
 
   <header>
@@ -141,183 +136,71 @@
   </main>
 
   <script>
-    /* =======================
-       Basic links (edit these)
-       ======================= */
-    const CONTRACT_ADDRESS   = "PASTE_YOUR_JETTON_ADDRESS";
-    const STONFI_LINK        = "https://ston.fi/your_pair";
-    const DEXSCREENER_LINK   = "https://dexscreener.com/ton/yourpair";
-    const TELEGRAM_LINK      = "https://t.me/your_channel";
+    /* ========= Sticker Rain + Clickable Wall (no captions) ========= */
+    const MAX_STICKERS=30, PATHS=["/stickers/","./stickers/"];
+    const CONTRACT_ADDRESS="PASTE_YOUR_JETTON_ADDRESS";
+    const STONFI_LINK="https://ston.fi/your_pair";
+    const DEXSCREENER_LINK="https://dexscreener.com/ton/yourpair";
+    const TELEGRAM_LINK="https://t.me/your_channel";
 
-    // Wire links & footer year ASAP
-    document.addEventListener('DOMContentLoaded', ()=>{
-      document.getElementById('year').textContent = new Date().getFullYear();
-      document.getElementById('contractAddr').textContent = CONTRACT_ADDRESS || "(add your jetton address)";
+    document.addEventListener('DOMContentLoaded',()=>{
+      document.getElementById('year').textContent=new Date().getFullYear();
+      document.getElementById('contractAddr').textContent=CONTRACT_ADDRESS || "(add your jetton address)";
       const setHref=(el,url)=>{if(el&&url){el.href=url;el.target='_blank';el.rel='noopener'}};
-      setHref(document.getElementById('buyBtn'), STONFI_LINK);
-      setHref(document.getElementById('chartBtn'), DEXSCREENER_LINK);
-      setHref(document.getElementById('tgBtn'), TELEGRAM_LINK);
-      setHref(document.getElementById('buyPrimary'), STONFI_LINK);
-      setHref(document.getElementById('chartPrimary'), DEXSCREENER_LINK);
+      setHref(document.getElementById('buyBtn'),STONFI_LINK);
+      setHref(document.getElementById('chartBtn'),DEXSCREENER_LINK);
+      setHref(document.getElementById('tgBtn'),TELEGRAM_LINK);
+      setHref(document.getElementById('buyPrimary'),STONFI_LINK);
+      setHref(document.getElementById('chartPrimary'),DEXSCREENER_LINK);
     });
 
-    /* ===================================
-       Auto-discover stickers (animal1..30)
-       Tries /stickers/ and ./stickers/
-       =================================== */
-    const MAX_STICKERS = 30;
-    const PATHS_TO_TRY = ["/stickers/", "./stickers/"]; // absolute then relative
+    function checkImage(url){return new Promise(res=>{const i=new Image();i.onload=()=>res(true);i.onerror=()=>res(false);i.src=url+"?v="+Date.now();});}
+    async function resolveSticker(file){for(const base of PATHS){const url=base+file;if(await checkImage(url))return url;}return null;}
+    async function discover(){const found=[];let miss=0;for(let i=1;i<=MAX_STICKERS;i++){const name=`animal${i}.png`;const url=await resolveSticker(name);if(url){found.push({url});miss=0;}else{miss++;if(miss>=3&&found.length)break;}}return found;}
 
-    function checkImage(url){
-      return new Promise(res=>{
-        const i=new Image();
-        i.onload=()=>res(true);
-        i.onerror=()=>res(false);
-        i.src = url + (url.includes("?") ? "&" : "?") + "v=" + Date.now(); // cache-bust
-      });
-    }
-    async function resolveStickerUrl(file){
-      for(const base of PATHS_TO_TRY){
-        const url = base + file;
-        if(await checkImage(url)) return url;
-      }
-      return null;
-    }
-    async function discoverStickers(){
-      const found=[]; let misses=0;
-      for(let i=1;i<=MAX_STICKERS;i++){
-        const name=`animal${i}.png`;
-        const url = await resolveStickerUrl(name);
-        if(url){ found.push({name,url}); misses=0; console.log("✅", name, "->", url); }
-        else   { misses++; console.warn("❌ missing:", name);
-                 if(misses>=3 && found.length) break; }
-      }
-      return found;
-    }
-
-    // Build the Sticker Wall
+    // Build Sticker Wall — clickable images (open full-size)
     function buildWall(list){
       const wall=document.getElementById('stickerWall');
       wall.innerHTML="";
-      if(!list.length){
-        wall.innerHTML="<p style='color:#ffb3b3'>No stickers found in /stickers/</p>";
-        return;
-      }
-      for(const it of list){
+      list.forEach(it=>{
         const fig=document.createElement('figure');
-        const img=document.createElement('img'); img.src=it.url; img.alt=it.name;
-        const cap=document.createElement('figcaption'); cap.textContent=it.name.replace(/\.png$/,'');
-        fig.appendChild(img); fig.appendChild(cap); wall.appendChild(fig);
-      }
+        const a=document.createElement('a');
+        const img=document.createElement('img');
+        a.href = it.url; a.target="_blank"; a.rel="noopener";
+        img.src = it.url; img.alt = "Sticker";
+        a.appendChild(img); fig.appendChild(a); wall.appendChild(fig);
+      });
     }
 
-    /* ===================================
-       Background Rain (auto-start)
-       Desktop vs Mobile (confetti) tuning
-       =================================== */
-    const MOBILE_BREAKPOINT = 780;
-    const DESKTOP = { DENSITY_BASE:26000, SIZE_MIN:28, SIZE_MAX:80, SPEED_MIN:0.8, SPEED_MAX:2.2, OPACITY:0.95 };
-    const CONFETTI= { DENSITY_BASE:42000, SIZE_MIN:18, SIZE_MAX:46, SPEED_MIN:0.6, SPEED_MAX:1.6, OPACITY:0.9 };
+    // Canvas rain (behind)
+    const cvs=document.getElementById('rain'),ctx=cvs.getContext('2d',{alpha:true});
+    const DESKTOP={DENSITY_BASE:26000,SIZE_MIN:28,SIZE_MAX:80,SPEED_MIN:.8,SPEED_MAX:2.2,OPACITY:.95};
+    const CONFETTI={DENSITY_BASE:42000,SIZE_MIN:18,SIZE_MAX:46,SPEED_MIN:.6,SPEED_MAX:1.6,OPACITY:.9};
+    function isMobile(){return Math.max(innerWidth,innerHeight)<780;}
+    let S=DESKTOP;
+    function fit(){const dpr=Math.max(1,Math.min(2,devicePixelRatio||1));cvs.width=innerWidth*dpr;cvs.height=innerHeight*dpr;cvs.style.width=innerWidth+'px';cvs.style.height=innerHeight+'px';ctx.setTransform(dpr,0,0,dpr,0,0);S=isMobile()?CONFETTI:DESKTOP;}
+    addEventListener('resize',fit,{passive:true});fit();
 
-    const cvs=document.getElementById('rain');
-    const ctx=cvs.getContext('2d',{alpha:true});
+    let icons=[],drops=[],rafId=0;
+    function targetCount(){return Math.max(16,Math.min(120,Math.floor((innerWidth*innerHeight)/S.DENSITY_BASE)));}
+    function spawn(){const img=icons[(Math.random()*icons.length)|0];const size=S.SIZE_MIN+Math.random()*(S.SIZE_MAX-S.SIZE_MIN);return{x:Math.random()*innerWidth,y:-80,vy:S.SPEED_MIN+Math.random()*(S.SPEED_MAX-S.SPEED_MIN),size,rot:Math.random()*Math.PI*2,vr:(Math.random()-.5)*0.02,sway:(Math.random()-.5)*.7,img};}
+    function step(){ctx.clearRect(0,0,innerWidth,innerHeight);for(const d of drops){d.y+=d.vy;d.x+=Math.sin(d.y*.02)*d.sway;d.rot+=d.vr;ctx.save();ctx.translate(d.x,d.y);ctx.rotate(d.rot);ctx.globalAlpha=S.OPACITY;ctx.drawImage(d.img,-d.size/2,-d.size/2,d.size,d.size);ctx.restore();}for(let i=drops.length-1;i>=0;i--)if(drops[i].y>innerHeight+100)drops.splice(i,1);if(icons.length&&drops.length<targetCount())drops.push(spawn());rafId=requestAnimationFrame(step);}
+    if(!rafId)rafId=requestAnimationFrame(step);
 
-    function isMobile(){ return Math.max(innerWidth, innerHeight) < MOBILE_BREAKPOINT; }
-    let S = DESKTOP;
+    function loadIcons(list){return Promise.all(list.map(it=>new Promise(r=>{const im=new Image();im.onload=()=>r(im);im.onerror=()=>r(null);im.src=it.url;}))).then(arr=>arr.filter(Boolean));}
 
-    function fit(){
-      const dpr=Math.max(1,Math.min(2,devicePixelRatio||1));
-      cvs.width=Math.floor(innerWidth*dpr);
-      cvs.height=Math.floor(innerHeight*dpr);
-      cvs.style.width=innerWidth+'px';
-      cvs.style.height=innerHeight+'px';
-      ctx.setTransform(dpr,0,0,dpr,0,0);
-      S = isMobile() ? CONFETTI : DESKTOP;
-    }
-    addEventListener('resize', fit, {passive:true});
-    fit();
-
-    let icons=[];   // loaded Image objects
-    let drops=[];   // active particles
-    let rafId=0;   // loop id
-
-    function targetCount(){
-      const area = innerWidth * innerHeight;
-      return Math.max(16, Math.min(120, Math.floor(area / S.DENSITY_BASE)));
-    }
-    function spawn(){
-      const img = icons[(Math.random()*icons.length)|0];
-      const size = S.SIZE_MIN + Math.random()*(S.SIZE_MAX - S.SIZE_MIN);
-      return {
-        x: Math.random()*innerWidth,
-        y: -80,
-        vy: S.SPEED_MIN + Math.random()*(S.SPEED_MAX - S.SPEED_MIN),
-        size,
-        rot: Math.random()*Math.PI*2,
-        vr: (Math.random()-.5)*0.02,
-        sway:(Math.random()-.5)*0.7,
-        img
-      };
-    }
-    function step(){
-      ctx.clearRect(0,0,innerWidth,innerHeight);
-      for(const d of drops){
-        d.y += d.vy;
-        d.x += Math.sin(d.y*0.02)*d.sway;
-        d.rot += d.vr;
-        ctx.save();
-        ctx.translate(d.x,d.y);
-        ctx.rotate(d.rot);
-        ctx.globalAlpha = S.OPACITY;
-        ctx.drawImage(d.img, -d.size/2, -d.size/2, d.size, d.size);
-        ctx.restore();
-      }
-      // recycle
-      for(let i=drops.length-1;i>=0;i--) if(drops[i].y>innerHeight+100) drops.splice(i,1);
-      // maintain density
-      if(icons.length){
-        const target = targetCount();
-        if(drops.length < target) drops.push(spawn());
-      }
-      rafId = requestAnimationFrame(step);
-    }
-
-    // Start animation loop immediately (don’t wait for images)
-    if(!rafId) rafId = requestAnimationFrame(step);
-
-    function loadIcons(list){
-      return Promise.all(list.map(it=>new Promise(res=>{
-        const im=new Image();
-        im.onload=()=>res(im);
-        im.onerror=()=>res(null);
-        im.src=it.url;
-      }))).then(arr=>arr.filter(Boolean));
-    }
-
-    // Boot ASAP
-    document.addEventListener('DOMContentLoaded', async ()=>{
-      const files = await discoverStickers();
+    document.addEventListener('DOMContentLoaded',async()=>{
+      const files=await discover();
       buildWall(files);
+      if(!files.length) return;
 
-      if(!files.length){
-        console.warn("No stickers discovered. Ensure /stickers/animal1.png etc. exist (case-sensitive).");
-        return;
-      }
+      const first=await loadIcons(files.slice(0,6));
+      icons.push(...first);
+      for(let i=0;i<12;i++)drops.push(spawn());
 
-      // Load a few first so rain begins immediately
-      const firstBatch = files.slice(0, Math.min(6, files.length));
-      const restBatch  = files.slice(firstBatch.length);
-
-      const firstIcons = await loadIcons(firstBatch);
-      icons.push(...firstIcons);
-
-      // Prefill several drops right away
-      for(let i=0;i<Math.min(12, Math.max(6, icons.length*2)); i++) drops.push(spawn());
-
-      // Load remaining icons progressively
-      if(restBatch.length){
-        const moreIcons = await loadIcons(restBatch);
-        icons.push(...moreIcons);
+      if(files.length>6){
+        const rest=await loadIcons(files.slice(6));
+        icons.push(...rest);
       }
     });
   </script>
