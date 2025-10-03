@@ -190,7 +190,7 @@
       <hr style="border:0; border-top:1px solid var(--line); margin-bottom:12px">
       <div style="display:flex; gap:14px; flex-wrap:wrap; align-items:center; justify-content:space-between">
         <small class="muted">© <span id="year"></span> ANIMALS · Built with sticker energy · Not financial advice.</small>
-        <div style="display:flex; gap:10px">
+        <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap; width:100%;">
           <a class="btn" href="https://www.geckoterminal.com/ton/pools/EQBpfJcKGLeI_Hjndfc1HiDD2OFC98S0O9rdaZhmwtlJFGtQ" target="_blank" rel="noopener">Chart</a>
           <a class="btn" href="https://dedust.io/" target="_blank" rel="noopener">DeDust</a>
           <a class="btn" href="https://x.com/animalstoncoin" target="_blank" rel="noopener">Twitter</a>
@@ -222,7 +222,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
   // Show shortened address but keep full for link + copy
   const contractCode = document.getElementById('contractAddr');
   contractCode.textContent = shorten(CONTRACT_ADDRESS);
-  contractCode.title = CONTRACT_ADDRESS; // tooltip with full address
+  contractCode.title = CONTRACT_ADDRESS;
   const contractLink = document.getElementById('contractLink');
   contractLink.href = TONVIEWER_LINK;
 
@@ -230,8 +230,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
   setHref('buyBtn',DEDUST_LINK); setHref('buyPrimary',DEDUST_LINK);
   setHref('chartBtn',CHART_LINK); setHref('chartPrimary',CHART_LINK);
   setHref('tgBtn',TELEGRAM_LINK); setHref('tgPrimary',TELEGRAM_LINK);
-  // Header Twitter removed; keep hero Twitter
-  setHref('twPrimary',TWITTER_LINK);
+  setHref('twPrimary',TWITTER_LINK); // hero Twitter button only
 
   // Copy contract address (full)
   const copyBtn = document.getElementById('copyBtn');
@@ -243,7 +242,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
       copyBtn.disabled = true;
       setTimeout(()=>{ copyBtn.textContent = prev; copyBtn.disabled = false; }, 1600);
     }catch(e){
-      // Fallback: select and copy
       const range = document.createRange();
       range.selectNode(document.getElementById('contractAddr'));
       const sel = window.getSelection();
@@ -319,7 +317,11 @@ function setProof(idx){
   link.href = nextUrl;
   document.querySelectorAll('.dot').forEach((d,i)=> d.classList.toggle('active', i===proofIdx));
 }
-function startProofs(){ if (proofTimer) clearInterval(proofTimer); setProof(0); proofTimer = setInterval(()=> setProof(proofIdx+1), SLIDE_MS); }
+function startProofs(){
+  if (proofTimer) clearInterval(proofTimer);
+  setProof(0);
+  proofTimer = setInterval(()=> setProof(proofIdx+1), SLIDE_MS);
+}
 function buildDots(){
   const holder = document.getElementById('proofDots');
   holder.innerHTML = "";
