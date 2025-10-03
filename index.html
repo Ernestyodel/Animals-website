@@ -64,7 +64,7 @@
   /* Rain canvas behind everything */
   #rain{position:fixed; inset:0; pointer-events:none; z-index:0;}
 
-  /* ===== Proofs Slideshow (full image, no crop) ===== */
+  /* ===== Proofs Slideshow ===== */
   .proofs{margin:26px 0 10px}
   .proofs h2{margin:0 0 10px 0}
   .proof-hero{
@@ -82,7 +82,7 @@
   .proof-hero img{
     max-width:100%;
     max-height:clamp(220px, 70vh, 600px);
-    object-fit:contain;     /* show full image */
+    object-fit:contain;
     display:block;
     opacity:0;
     transition: opacity .6s ease;
@@ -99,9 +99,17 @@
     cursor:pointer; transition:transform .2s ease, background .2s ease;
   }
   .dot.active{ background:#fff; transform:scale(1.1); }
-  .proof-hero a.full{
-    position:absolute; inset:0;   /* make image clickable to open full */
-    z-index:2;
+  .proof-hero a.full{ position:absolute; inset:0; z-index:2; }
+
+  /* Small helper to align copy button on narrow screens */
+  .contract-row{ display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin-top:12px; }
+  .copy-btn{
+    padding:6px 10px;
+    border:1px solid var(--line);
+    border-radius:6px;
+    background:rgba(255,255,255,.06);
+    color:var(--text);
+    cursor:pointer;
   }
 </style>
 </head>
@@ -138,13 +146,16 @@
         <a class="pill secondary" id="tgPrimary" href="#">💬 Telegram</a>
         <a class="pill secondary" id="twPrimary" href="#">🐦 Twitter</a>
       </div>
-      <div style="margin-top:12px">
+
+      <!-- Contract + Copy -->
+      <div class="contract-row">
         <span class="badge">
           Contract:
           <a id="contractLink" href="#" target="_blank" rel="noopener">
             <code id="contractAddr"></code>
           </a>
         </span>
+        <button id="copyBtn" class="copy-btn" type="button" aria-label="Copy contract address">Copy</button>
       </div>
     </section>
 
@@ -204,6 +215,26 @@ document.addEventListener('DOMContentLoaded', ()=>{
   setHref('chartBtn',CHART_LINK); setHref('chartPrimary',CHART_LINK);
   setHref('tgBtn',TELEGRAM_LINK); setHref('tgPrimary',TELEGRAM_LINK);
   setHref('twBtn',TWITTER_LINK); setHref('twPrimary',TWITTER_LINK);
+
+  // Copy contract address
+  const copyBtn = document.getElementById('copyBtn');
+  copyBtn.addEventListener('click', async ()=>{
+    try{
+      await navigator.clipboard.writeText(CONTRACT_ADDRESS);
+      const prev = copyBtn.textContent;
+      copyBtn.textContent = "Copied!";
+      copyBtn.disabled = true;
+      setTimeout(()=>{ copyBtn.textContent = prev; copyBtn.disabled = false; }, 1600);
+    }catch(e){
+      // Fallback: select text
+      const range = document.createRange();
+      range.selectNode(document.getElementById('contractAddr'));
+      const sel = window.getSelection();
+      sel.removeAllRanges(); sel.addRange(range);
+      try{ document.execCommand('copy'); }catch(_){}
+      sel.removeAllRanges();
+    }
+  });
 });
 
 /* ===================================
@@ -214,36 +245,23 @@ const PROOFS = [
   "https://i.ibb.co/fd9HqwvW/image.jpg",
   "https://i.ibb.co/d0Sg6rMp/image.jpg"
 ];
-const SLIDE_MS = 3500; // change every X ms
+const SLIDE_MS = 3500;
 let proofIdx = 0, proofTimer = null;
 
 function preload(urls){ urls.forEach(u=>{ const i=new Image(); i.src=u; }); }
-
 function setProof(idx){
   proofIdx = (idx + PROOFS.length) % PROOFS.length;
   const img = document.getElementById('proofImg');
   const link = document.getElementById('proofLink');
-  img.classList.remove('show'); // fade out
+  img.classList.remove('show');
   const nextUrl = PROOFS[proofIdx];
   const tmp = new Image();
-  tmp.onload = ()=>{
-    img.src = nextUrl;
-    img.classList.add('show');
-  };
-  tmp.src = nextUrl + "?v=" + Date.now(); // cache-bust
+  tmp.onload = ()=>{ img.src = nextUrl; img.classList.add('show'); };
+  tmp.src = nextUrl + "?v=" + Date.now();
   link.href = nextUrl;
-
-  // update dots
-  const dots = document.querySelectorAll('.dot');
-  dots.forEach((d,i)=> d.classList.toggle('active', i===proofIdx));
+  document.querySelectorAll('.dot').forEach((d,i)=> d.classList.toggle('active', i===proofIdx));
 }
-
-function startProofs(){
-  if (proofTimer) clearInterval(proofTimer);
-  setProof(0);
-  proofTimer = setInterval(()=> setProof(proofIdx+1), SLIDE_MS);
-}
-
+function startProofs(){ if (proofTimer) clearInterval(proofTimer); setProof(0); proofTimer = setInterval(()=> setProof(proofIdx+1), SLIDE_MS); }
 function buildDots(){
   const holder = document.getElementById('proofDots');
   holder.innerHTML = "";
@@ -258,7 +276,6 @@ function buildDots(){
     holder.appendChild(d);
   });
 }
-
 function wireHoverPause(){
   const hero = document.getElementById('proofHero');
   hero.addEventListener('mouseenter', ()=>{ if(proofTimer){ clearInterval(proofTimer); proofTimer=null; }});
@@ -266,11 +283,10 @@ function wireHoverPause(){
 }
 
 /* ===================================
-   Sticker discovery for Wall (GitHub Pages friendly)
+   Sticker Wall (GitHub Pages friendly)
    =================================== */
 const MAX_STICKERS = 30;
 const PATHS_TO_TRY = ["./stickers/"]; // relative path only
-
 function checkImage(url){
   return new Promise(res=>{
     const i=new Image();
@@ -340,7 +356,7 @@ function spawn(){
   return{
     x:Math.random()*innerWidth,
     y:-80,
-    vy:S.SPEED_MIN+Math.random()*(S.SPEED_MAX-S_SPEED_MIN),
+    vy:S.SPEED_MIN+Math.random()*(S.SPEED_MAX-S.SPEED_MIN),
     size,
     rot:Math.random()*Math.PI*2,
     vr:(Math.random()-.5)*0.02,
