@@ -125,7 +125,7 @@
         <a class="btn" id="buyBtn" href="#">Buy on DeDust</a>
         <a class="btn" id="chartBtn" href="#">Chart</a>
         <a class="btn" id="tgBtn" href="#">Telegram</a>
-        <a class="btn" id="twBtn" href="#">Twitter</a>
+        <!-- Twitter removed from header -->
       </div>
     </div>
   </header>
@@ -149,7 +149,7 @@
       <div class="contract-row">
         <span class="badge">
           Contract:
-          <a id="contractLink" href="#" target="_blank" rel="noopener">
+          <a id="contractLink" href="#" target="_blank" rel="noopener" title="Open in Tonviewer">
             <code id="contractAddr" class="mono"></code>
           </a>
         </span>
@@ -176,7 +176,7 @@
     <section style="margin:34px 0">
       <div class="grid">
         <article class="card"><h3>What is ANIMALS?</h3><p class="muted">A fun TON-native meme token that pays homage to Telegram’s first custom sticker and the culture it unlocked.</p></article>
-        <article class="card"><h3>Why stickers?</h3><p class="muted">Stickers turned chats into playgrounds. ANIMALS captures that energy fast, visual, shareable then pairs it with on-chain fun.</p></article>
+        <article class="card"><h3>Why stickers?</h3><p class="muted">Stickers turned chats into playgrounds. ANIMALS captures that energy — fast, visual, shareable — then pairs it with on-chain fun.</p></article>
         <article class="card"><h3>How to join</h3><p class="muted">Grab some ANIMALS on DeDust, join the Telegram, and drop your best sticker-powered memes. Simple.</p></article>
       </div>
     </section>
@@ -212,19 +212,28 @@ const TONVIEWER_LINK   = "https://tonviewer.com/" + CONTRACT_ADDRESS;
 const GT_POOL_API  = "https://api.geckoterminal.com/api/v2/networks/ton/pools/EQBpfJcKGLeI_Hjndfc1HiDD2OFC98S0O9rdaZhmwtlJFGtQ";
 const GT_TOKEN_API = "https://api.geckoterminal.com/api/v2/networks/ton/tokens/" + CONTRACT_ADDRESS;
 
+/* ---------- Helpers ---------- */
+const shorten = a => a ? (a.slice(0,8) + "..." + a.slice(-6)) : "";
+
 /* ---------- Wire links + contract + copy ---------- */
 document.addEventListener('DOMContentLoaded', ()=>{
   document.getElementById('year').textContent = new Date().getFullYear();
-  document.getElementById('contractAddr').textContent = CONTRACT_ADDRESS;
-  document.getElementById('contractLink').href = TONVIEWER_LINK;
+
+  // Show shortened address but keep full for link + copy
+  const contractCode = document.getElementById('contractAddr');
+  contractCode.textContent = shorten(CONTRACT_ADDRESS);
+  contractCode.title = CONTRACT_ADDRESS; // tooltip with full address
+  const contractLink = document.getElementById('contractLink');
+  contractLink.href = TONVIEWER_LINK;
 
   const setHref=(id,url)=>{const el=document.getElementById(id); if(el&&url){el.href=url;el.target='_blank';el.rel='noopener'}};
   setHref('buyBtn',DEDUST_LINK); setHref('buyPrimary',DEDUST_LINK);
   setHref('chartBtn',CHART_LINK); setHref('chartPrimary',CHART_LINK);
   setHref('tgBtn',TELEGRAM_LINK); setHref('tgPrimary',TELEGRAM_LINK);
-  setHref('twBtn',TWITTER_LINK); setHref('twPrimary',TWITTER_LINK);
+  // Header Twitter removed; keep hero Twitter
+  setHref('twPrimary',TWITTER_LINK);
 
-  // Copy contract address
+  // Copy contract address (full)
   const copyBtn = document.getElementById('copyBtn');
   copyBtn.addEventListener('click', async ()=>{
     try{
@@ -244,7 +253,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
     }
   });
 
-  loadMetrics();               // initial fetch
+  loadMetrics();                    // initial fetch
   setInterval(loadMetrics, 60_000); // refresh every minute
 });
 
@@ -262,22 +271,17 @@ async function loadMetrics(){
   const mcEl    = document.getElementById('mcVal');
 
   try {
-    // Prefer token endpoint (often includes market_cap_usd / fdv_usd)
+    // Prefer token endpoint
     const t = await fetch(GT_TOKEN_API, {headers:{'Accept':'application/json'}}).then(r=>r.json());
     const ta = t?.data?.attributes || {};
     let priceUsd = ta.price_usd ?? ta.base_token_price_usd;
     if(!priceUsd){
-      // Fallback: read from pool if token endpoint doesn't have price
+      // Fallback: pool price
       const p = await fetch(GT_POOL_API, {headers:{'Accept':'application/json'}}).then(r=>r.json());
       priceUsd = p?.data?.attributes?.base_token_price_usd;
     }
-    if(priceUsd){
-      priceEl.textContent = formatUSD(priceUsd);
-    } else {
-      priceEl.textContent = "N/A";
-    }
+    priceEl.textContent = priceUsd ? formatUSD(priceUsd) : "N/A";
 
-    // Market cap: prefer market_cap_usd, else show FDV if available
     const mc = ta.market_cap_usd ?? ta.fdv_usd ?? null;
     if(mc){
       mcEl.textContent = formatUSD(mc);
